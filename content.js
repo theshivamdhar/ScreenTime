@@ -5,7 +5,7 @@
   container.style.right = "10px";
   container.style.padding = "10px";
   container.style.backgroundColor = "rgba(30, 30, 30, 0.8)";
-  container.style.color = "#ffffff";
+  container.style.color = "##e0e0e0";
   container.style.fontFamily = "Arial, sans-serif";
   container.style.fontSize = "14px";
   container.style.borderRadius = "5px";
