@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ScreenTime Settings</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        width: 300px;
+        padding: 10px;
+      }
+      h1 {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+      label {
+        display: block;
+        margin: 5px 0;
+      }
+      input[type="text"],
+      input[type="number"] {
+        width: calc(100% - 20px);
+        padding: 5px;
+        margin-bottom: 10px;
+      }
+      button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      #usage-data {
+        margin-top: 20px;
+      }
+      #usage-data h2 {
+        font-size: 16px;
+        margin: 0 0 10px 0;
+      }
+      #usage-data p {
+        font-size: 14px;
+        margin: 5px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>ScreenTime Settings</h1>
+    <div id="site-limits">
+      <h2>Set Site Limits</h2>
+      <p>Enter time limits in minutes:</p>
+      <div>
+        <label for="site">Site:</label>
+        <input type="text" id="site" placeholder="example.com" />
+      </div>
+      <div>
+        <label for="limit">Limit:</label>
+        <input type="number" id="limit" placeholder="Minutes" />
+      </div>
+      <button id="set-limit">Set Limit</button>
+    </div>
+    <div id="usage-data">
+      <h2>Usage Data</h2>
+      <div id="daily-usage"></div>
+      <div id="weekly-usage"></div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
