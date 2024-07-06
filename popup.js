@@ -38,31 +38,49 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initial display
   updateTimeDisplay();
 
-  // Exit ScreenTime functionality
+  // Exit ScreenTime and Reset All Timers functionality
   exitButton.addEventListener("click", () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const activeTab = tabs[0];
-      chrome.tabs.sendMessage(activeTab.id, { action: "exitScreenTime" });
-    });
+    if (
+      confirm("Are you sure you want to exit ScreenTime and reset all timers?")
+    ) {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const activeTab = tabs[0];
+        chrome.tabs.sendMessage(activeTab.id, { action: "exitScreenTime" });
+        chrome.tabs.sendMessage(activeTab.id, { action: "resetTimer" });
+      });
 
-    // Clear browsing data (websites visited today)
-    chrome.browsingData.remove(
-      {
-        origins: ["<all_urls>"],
-        since: 0, // clear data from the beginning of time
-      },
-      {
-        browsingHistory: true,
-        downloadHistory: false,
-        cookies: false,
-        localStorage: false,
-        pluginData: false,
-        passwords: false,
-        formData: false,
-      }
-    );
+      // Clear browsing data (websites visited today)
+      chrome.browsingData.remove(
+        {
+          origins: ["<all_urls>"],
+          since: 0, // clear data from the beginning of time
+        },
+        {
+          browsingHistory: true,
+          downloadHistory: false,
+          cookies: false,
+          localStorage: false,
+          pluginData: false,
+          passwords: false,
+          formData: false,
+        }
+      );
 
-    window.close(); // Close the popup
+      // Reset all timers
+      chrome.storage.local.get(null, (items) => {
+        const resetItems = {};
+        for (const key in items) {
+          if (key.startsWith("screenTime_")) {
+            resetItems[key] = 0;
+          }
+        }
+        chrome.storage.local.set(resetItems, () => {
+          updateTimeDisplay();
+        });
+      });
+
+      window.close(); // Close the popup
+    }
   });
 
   // Reset All Timers functionality
