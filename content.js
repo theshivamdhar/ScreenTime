@@ -39,11 +39,7 @@
 
     function saveTimeSpent() {
       localStorage.setItem(storageKey, secondsSpent.toString());
-      try {
-        chrome.storage.local.set({ [storageKey]: secondsSpent });
-      } catch (error) {
-        console.error("Error saving to chrome.storage:", error);
-      }
+      chrome.storage.local.set({ [storageKey]: secondsSpent });
     }
 
     // Update the timer every second
@@ -70,6 +66,13 @@
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "exitScreenTime") {
       cleanup();
+    } else if (request.action === "resetTimer") {
+      localStorage.setItem(storageKey, "0");
+      chrome.storage.local.set({ [storageKey]: 0 }, () => {
+        cleanup();
+        createTimer();
+        startTimer();
+      });
     }
   });
 

@@ -1,34 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
   const websiteTimesElem = document.getElementById("website-times");
   const exitButton = document.getElementById("exit-button");
+  const resetButton = document.getElementById("reset-button");
 
   function updateTimeDisplay() {
-    try {
-      chrome.storage.local.get(null, (items) => {
-        websiteTimesElem.innerHTML = "";
-        for (const [key, time] of Object.entries(items)) {
-          if (key.startsWith("screenTime_")) {
-            const site = key.replace("screenTime_", "");
-            const siteElem = document.createElement("div");
-            siteElem.className = "site-time";
-            siteElem.innerHTML = `
-              <strong>${site}</strong>: 
-              <span class="time-display" data-site="${site}">${formatTime(
-              time
-            )}</span>
-            `;
-            websiteTimesElem.appendChild(siteElem);
-          }
-        }
-      });
-    } catch (error) {
-      console.error("Error updating time display:", error);
-      // Fallback to localStorage if chrome.storage fails
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
+    chrome.storage.local.get(null, (items) => {
+      websiteTimesElem.innerHTML = "";
+      for (const [key, time] of Object.entries(items)) {
         if (key.startsWith("screenTime_")) {
           const site = key.replace("screenTime_", "");
-          const time = parseInt(localStorage.getItem(key) || "0");
           const siteElem = document.createElement("div");
           siteElem.className = "site-time";
           siteElem.innerHTML = `
@@ -40,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
           websiteTimesElem.appendChild(siteElem);
         }
       }
-    }
+    });
   }
 
   function formatTime(seconds) {
@@ -58,6 +38,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initial display
   updateTimeDisplay();
 
+  // Exit ScreenTime functionality
+  exitButton.addEventListener("click", () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const activeTab = tabs[0];
+      chrome.tabs.sendMessage(activeTab.id, { action: "exitScreenTime" });
+    });
+    window.close(); // Close the popup
+  });
+
   // Reset All Timers functionality
   resetButton.addEventListener("click", () => {
     if (confirm("Are you sure you want to reset all timers?")) {
@@ -69,26 +58,14 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
         chrome.storage.local.set(resetItems, () => {
-          // Also reset localStorage
-          for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key.startsWith("screenTime_")) {
-              localStorage.setItem(key, "0");
-            }
-          }
           updateTimeDisplay();
+          chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            const activeTab = tabs[0];
+            chrome.tabs.sendMessage(activeTab.id, { action: "resetTimer" });
+          });
         });
       });
     }
-  });
-
-  // Exit ScreenTime functionality
-  exitButton.addEventListener("click", () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const activeTab = tabs[0];
-      chrome.tabs.sendMessage(activeTab.id, { action: "exitScreenTime" });
-    });
-    window.close(); // Close the popup
   });
 
   // Cleanup function
