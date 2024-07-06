@@ -32,6 +32,17 @@ document.addEventListener("DOMContentLoaded", () => {
       .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   }
 
+  function clearAllData() {
+    return new Promise((resolve) => {
+      chrome.storage.local.get(null, (items) => {
+        const keysToRemove = Object.keys(items).filter((key) =>
+          key.startsWith("screenTime_")
+        );
+        chrome.storage.local.remove(keysToRemove, resolve);
+      });
+    });
+  }
+
   // Update time display every second
   const updateInterval = setInterval(updateTimeDisplay, 1000);
 
@@ -62,13 +73,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Exit ScreenTime functionality
   exitButton.addEventListener("click", () => {
-    if (confirm("Are you sure you want to exit ScreenTime?")) {
-      chrome.tabs.query({}, (tabs) => {
-        tabs.forEach((tab) => {
-          chrome.tabs.sendMessage(tab.id, { action: "exitScreenTime" });
+    if (
+      confirm(
+        "Are you sure you want to exit ScreenTime? This will clear all data."
+      )
+    ) {
+      clearAllData().then(() => {
+        chrome.tabs.query({}, (tabs) => {
+          tabs.forEach((tab) => {
+            chrome.tabs.sendMessage(tab.id, { action: "exitScreenTime" });
+          });
         });
+        window.close();
       });
-      window.close();
     }
   });
 
