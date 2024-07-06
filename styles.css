@@ -1,13 +1,65 @@
-/* ... (existing styles) */
+body.dark-purple-theme {
+  font-family: Arial, sans-serif;
+  width: 300px;
+  height: 400px;
+  margin: 0;
+  padding: 15px;
+  box-sizing: border-box;
+  background-color: #1a0b26; /* Dark purple background */
+  color: #e0e0e0; /* Light gray text */
+}
+
+h3 {
+  margin: 0 0 15px 0;
+  font-size: 20px;
+  color: #b19cd9; /* Light purple shade for headings */
+}
+
+h4 {
+  margin: 10px 0;
+  color: #9370db; /* Medium purple shade for subheadings */
+}
+
+#time-list {
+  margin-top: 10px;
+}
+
+#website-times {
+  overflow-y: auto;
+  max-height: 300px;
+  padding-right: 10px;
+}
 
 .site-time {
   margin-bottom: 15px;
   padding: 10px;
-  background-color: #1e1e1e;
+  background-color: #301934; /* Darker purple for list items */
   border-radius: 5px;
+  border: 1px solid #4b0082; /* Indigo border */
+}
+
+.site-time strong {
+  color: #d8bfd8; /* Light purple for website names */
 }
 
 .time-display {
   font-weight: bold;
-  color: #ffffff;
+  color: #dda0dd; /* Plum color for time display */
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a0b26;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4b0082;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6a5acd;
 }

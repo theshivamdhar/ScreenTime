@@ -2,22 +2,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const websiteTimesElem = document.getElementById("website-times");
 
   function updateTimeDisplay() {
-    chrome.storage.local.get(["timeSpent"], (result) => {
-      const timeSpent = result.timeSpent || {};
-      websiteTimesElem.innerHTML = "";
+    try {
+      chrome.storage.local.get(["timeSpent"], (result) => {
+        const timeSpent = result.timeSpent || {};
+        websiteTimesElem.innerHTML = "";
 
-      for (const [site, time] of Object.entries(timeSpent)) {
-        const siteElem = document.createElement("div");
-        siteElem.className = "site-time";
-        siteElem.innerHTML = `
-          <strong>${site}</strong>: 
-          <span class="time-display" data-site="${site}">${formatTime(
-          time
-        )}</span>
-        `;
-        websiteTimesElem.appendChild(siteElem);
-      }
-    });
+        for (const [site, time] of Object.entries(timeSpent)) {
+          const siteElem = document.createElement("div");
+          siteElem.className = "site-time";
+          siteElem.innerHTML = `
+            <strong>${site}</strong>: 
+            <span class="time-display" data-site="${site}">${formatTime(
+            time
+          )}</span>
+          `;
+          websiteTimesElem.appendChild(siteElem);
+        }
+      });
+    } catch (error) {
+      console.error("Error updating time display:", error);
+    }
   }
 
   function formatTime(seconds) {
@@ -30,23 +34,37 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Update time display every second
-  setInterval(() => {
-    chrome.storage.local.get(["timeSpent"], (result) => {
-      const timeSpent = result.timeSpent || {};
-      for (const [site, time] of Object.entries(timeSpent)) {
-        const display = document.querySelector(
-          `.time-display[data-site="${site}"]`
-        );
-        if (display) {
-          display.textContent = formatTime(time);
+  const updateInterval = setInterval(() => {
+    try {
+      chrome.storage.local.get(["timeSpent"], (result) => {
+        const timeSpent = result.timeSpent || {};
+        for (const [site, time] of Object.entries(timeSpent)) {
+          const display = document.querySelector(
+            `.time-display[data-site="${site}"]`
+          );
+          if (display) {
+            display.textContent = formatTime(time);
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error updating times:", error);
+      clearInterval(updateInterval);
+    }
   }, 1000);
 
   // Initial display
   updateTimeDisplay();
 
   // Refresh data every 10 seconds to catch any new sites
-  setInterval(updateTimeDisplay, 10000);
+  const refreshInterval = setInterval(updateTimeDisplay, 10000);
+
+  // Cleanup function
+  function cleanup() {
+    clearInterval(updateInterval);
+    clearInterval(refreshInterval);
+  }
+
+  // Listen for unload event to perform cleanup
+  window.addEventListener("unload", cleanup);
 });
