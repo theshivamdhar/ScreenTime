@@ -57,7 +57,10 @@
   // Add event listener to remove button to clear the interval and remove the container
   removeButton.addEventListener("click", () => {
     clearInterval(intervalId);
-    container.remove();
+    // Ensure container is removed only if it exists
+    if (document.body.contains(container)) {
+      container.remove();
+    }
   });
 
   // Initial label update
