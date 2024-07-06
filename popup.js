@@ -38,44 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initial display
   updateTimeDisplay();
 
-  // Clear browsing data (websites visited today)
-  chrome.browsingData.remove(
-    {
-      origins: ["<all_urls>"],
-      since: 0, // clear data from the beginning of time
-    },
-    {
-      browsingHistory: true,
-      downloadHistory: false,
-      cookies: false,
-      localStorage: false,
-      pluginData: false,
-      passwords: false,
-      formData: false,
-    }
-  );
-
-  // Reset all timers
-  chrome.storage.local.get(null, (items) => {
-    const resetItems = {};
-    for (const key in items) {
-      if (key.startsWith("screenTime_")) {
-        resetItems[key] = 0;
-      }
-    }
-    chrome.storage.local.set(resetItems, () => {
-      updateTimeDisplay();
-    });
-  });
-
-  // Close the popup
-  window.close();
-
-  // Display a message when the user wants to start the plugin again
-  chrome.runtime.onStartup.addListener(() => {
-    chrome.tabs.create({ url: "message.html" });
-  });
-
   // Reset All Timers functionality
   resetButton.addEventListener("click", () => {
     if (confirm("Are you sure you want to reset all timers?")) {
@@ -88,12 +50,25 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         chrome.storage.local.set(resetItems, () => {
           updateTimeDisplay();
-          chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            const activeTab = tabs[0];
-            chrome.tabs.sendMessage(activeTab.id, { action: "resetTimer" });
+          chrome.tabs.query({}, (tabs) => {
+            tabs.forEach((tab) => {
+              chrome.tabs.sendMessage(tab.id, { action: "resetTimer" });
+            });
           });
         });
       });
+    }
+  });
+
+  // Exit ScreenTime functionality
+  exitButton.addEventListener("click", () => {
+    if (confirm("Are you sure you want to exit ScreenTime?")) {
+      chrome.tabs.query({}, (tabs) => {
+        tabs.forEach((tab) => {
+          chrome.tabs.sendMessage(tab.id, { action: "exitScreenTime" });
+        });
+      });
+      window.close();
     }
   });
 
