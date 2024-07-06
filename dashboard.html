@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ScreenTime Dashboard</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        width: 300px;
+        padding: 10px;
+      }
+      h1 {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+      .data-container {
+        margin-top: 20px;
+      }
+      .data-item {
+        margin-bottom: 10px;
+      }
+      .time-wheel {
+        width: 200px;
+        height: 200px;
+        border: 10px solid #ccc;
+        border-radius: 50%;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+      }
+      .time-wheel span {
+        font-size: 18px;
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>ScreenTime Dashboard</h1>
+    <div class="data-container">
+      <div class="data-item" id="total-time"></div>
+      <div class="data-item" id="daily-usage"></div>
+      <div class="data-item" id="weekly-usage"></div>
+    </div>
+    <div class="time-wheel">
+      <span id="time-wheel-text">Time Spend</span>
+    </div>
+    <script src="dashboard.js"></script>
+  </body>
+</html>
