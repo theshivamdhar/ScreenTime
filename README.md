@@ -31,6 +31,10 @@ ScreenTime is a Chrome extension designed to help users track and manage their t
    - ScreenTime should now appear in your list of installed extensions.
    - You should see the ScreenTime icon in your Chrome toolbar.
 
+## Important Note
+
+> **⚠️ Note:** After installing the extension, you may encounter an error message in the console. This is a known issue and does not affect the functionality of ScreenTime. The plugin is working properly despite this error. We are actively working on resolving this in future updates.
+
 ## Usage
 
 1. **View Current Site Time**: Hover over the ScreenTime icon in your browser toolbar.
