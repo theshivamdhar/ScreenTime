@@ -23,10 +23,12 @@ document.addEventListener("DOMContentLoaded", () => {
           const siteElement = document.querySelector(
             `.time-display[data-site="${site}"]`
           );
-          const currentTime = parseTime(siteElement.textContent);
-          siteElement.textContent = formatTime(currentTime + 1);
-          timeSpent[site] = currentTime + 1;
-          saveTimeSpent();
+          if (siteElement) {
+            const currentTime = parseTime(siteElement.textContent);
+            siteElement.textContent = formatTime(currentTime + 1);
+            timeSpent[site] = currentTime + 1;
+            saveTimeSpent();
+          }
         }, 1000);
       }
     });
