@@ -11,7 +11,7 @@ modeToggleButton.id = "mode-toggle";
 modeToggleButton.textContent = "🌙";
 document.body.appendChild(modeToggleButton);
 
-// Create a div to hold the timer
+// Create a wrapper for the timer to make it movable
 const timerWrapper = document.createElement("div");
 timerWrapper.id = "timer-wrapper";
 timerWrapper.appendChild(timerLabel);
@@ -50,7 +50,7 @@ function displayTime(seconds) {
 
 // Start the timer
 updateTime();
-setInterval(updateTime, 10000); // Update every 10 seconds
+setInterval(updateTime, 1000); // Update every second
 
 // Handle mode toggle
 modeToggleButton.addEventListener("click", () => {
@@ -71,9 +71,13 @@ function updateMode() {
 
 // Handle drag and drop for the timer
 let isDragging = false;
+let offsetX = 0;
+let offsetY = 0;
 
 timerLabel.addEventListener("mousedown", (e) => {
   isDragging = true;
+  offsetX = e.clientX - timerLabel.getBoundingClientRect().left;
+  offsetY = e.clientY - timerLabel.getBoundingClientRect().top;
   document.addEventListener("mousemove", onMouseMove);
   document.addEventListener("mouseup", () => {
     isDragging = false;
@@ -83,8 +87,9 @@ timerLabel.addEventListener("mousedown", (e) => {
 
 function onMouseMove(e) {
   if (isDragging) {
-    timerLabel.style.left = `${e.pageX - timerLabel.offsetWidth / 2}px`;
-    timerLabel.style.top = `${e.pageY - timerLabel.offsetHeight / 2}px`;
+    timerWrapper.style.left = `${e.clientX - offsetX}px`;
+    timerWrapper.style.top = `${e.clientY - offsetY}px`;
+    timerWrapper.style.position = "fixed"; // Ensure it's positioned correctly
   }
 }
 
