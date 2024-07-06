@@ -68,9 +68,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Reset all timers
-  function resetAllTimers() {
-    chrome.storage.local.set({ timeSpent: {} }, updateTimeDisplay);
-  }
+  resetAllButton.addEventListener("click", () => {
+    resetAllTimers();
+    window.close(); // Close the popup
+  });
 
   // Cleanup function
   function cleanup() {
