@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
         siteElem.className = "site-time";
         siteElem.innerHTML = `
           <strong>${site}</strong>: 
-          <span class="time-display" data-site="${site}" data-time="${time}">${formatTime(
+          <span class="time-display" data-site="${site}">${formatTime(
           time
         )}</span>
         `;
@@ -31,17 +31,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Update time display every second
   setInterval(() => {
-    const timeDisplays = document.querySelectorAll(".time-display");
-    timeDisplays.forEach((display) => {
-      let time = parseInt(display.getAttribute("data-time")) + 1;
-      display.setAttribute("data-time", time);
-      display.textContent = formatTime(time);
+    chrome.storage.local.get(["timeSpent"], (result) => {
+      const timeSpent = result.timeSpent || {};
+      for (const [site, time] of Object.entries(timeSpent)) {
+        const display = document.querySelector(
+          `.time-display[data-site="${site}"]`
+        );
+        if (display) {
+          display.textContent = formatTime(time);
+        }
+      }
     });
   }, 1000);
 
   // Initial display
   updateTimeDisplay();
 
-  // Refresh data every 10 seconds
+  // Refresh data every 10 seconds to catch any new sites
   setInterval(updateTimeDisplay, 10000);
 });
