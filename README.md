@@ -16,15 +16,16 @@ ScreenTime is a Chrome extension that helps you track the time spent on any webs
 
 1. **Clone or download the repository:**
 
-   "git clone https://github.com/theshivamdhar/ScreenTime.git"
+    ```bash
+      git clone https://github.com/theshivamdhar/ScreenTime.git
 
-2. **Navigate to the Chrome Extensions page:**
+3. **Navigate to the Chrome Extensions page:**
 Open Chrome and go to `chrome://extensions/`.
 
-3. **Enable Developer Mode:**
+4. **Enable Developer Mode:**
 Toggle the "Developer mode" switch in the top right corner.
 
-4. **Load Unpacked Extension:**
+5. **Load Unpacked Extension:**
 Click on the "Load unpacked" button and select the directory where you cloned or downloaded the repository.
 
 ## Usage
