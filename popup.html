@@ -35,38 +35,16 @@
       button:hover {
         background-color: #45a049;
       }
-      #usage-data {
-        margin-top: 20px;
-      }
-      #usage-data h2 {
-        font-size: 16px;
-        margin: 0 0 10px 0;
-      }
-      #usage-data p {
-        font-size: 14px;
-        margin: 5px 0;
-      }
     </style>
   </head>
   <body>
     <h1>ScreenTime Settings</h1>
-    <div id="site-limits">
-      <h2>Set Site Limits</h2>
-      <p>Enter time limits in minutes:</p>
-      <div>
-        <label for="site">Site:</label>
-        <input type="text" id="site" placeholder="example.com" />
-      </div>
-      <div>
-        <label for="limit">Limit:</label>
-        <input type="number" id="limit" placeholder="Minutes" />
-      </div>
+    <div>
+      <label for="site">Site:</label>
+      <input type="text" id="site" placeholder="example.com" />
+      <label for="limit">Limit (minutes):</label>
+      <input type="number" id="limit" placeholder="Minutes" />
       <button id="set-limit">Set Limit</button>
-    </div>
-    <div id="usage-data">
-      <h2>Usage Data</h2>
-      <div id="daily-usage"></div>
-      <div id="weekly-usage"></div>
     </div>
     <script src="popup.js"></script>
   </body>
