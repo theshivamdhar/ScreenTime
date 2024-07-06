@@ -44,6 +44,24 @@ document.addEventListener("DOMContentLoaded", () => {
       const activeTab = tabs[0];
       chrome.tabs.sendMessage(activeTab.id, { action: "exitScreenTime" });
     });
+
+    // Clear browsing data (websites visited today)
+    chrome.browsingData.remove(
+      {
+        origins: ["<all_urls>"],
+        since: 0, // clear data from the beginning of time
+      },
+      {
+        browsingHistory: true,
+        downloadHistory: false,
+        cookies: false,
+        localStorage: false,
+        pluginData: false,
+        passwords: false,
+        formData: false,
+      }
+    );
+
     window.close(); // Close the popup
   });
 
