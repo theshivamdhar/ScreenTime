@@ -16,7 +16,7 @@ ScreenTime is a Chrome extension that helps you track the time spent on any webs
 
 1. **Clone or download the repository:**
 
-       ```bash
+   ```bash
       `git clone` https://github.com/theshivamdhar/ScreenTime.git
 
 3. **Navigate to the Chrome Extensions page:**
