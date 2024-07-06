@@ -7,7 +7,7 @@ function updateDashboard() {
     for (let domain in response) {
       total += response[domain].timeSpent;
 
-      // Simulate daily and weekly data
+      // Example daily and weekly data
       daily[domain] = Math.floor(Math.random() * 3600); // Random data for example
       weekly[domain] = Math.floor(Math.random() * 3600); // Random data for example
     }
@@ -48,7 +48,7 @@ function formatTime(seconds) {
 }
 
 function updateTimeWheel(totalSeconds) {
-  let percentage = (totalSeconds / 3600) * 100; // Assuming 3600 seconds = 1 hour
+  let percentage = (totalSeconds / (24 * 3600)) * 100; // Assuming 24 hours for full circle
   let wheelText = document.getElementById("time-wheel-text");
   wheelText.textContent = `${percentage.toFixed(2)}%`;
 }

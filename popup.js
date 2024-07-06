@@ -1,6 +1,6 @@
 document.getElementById("set-limit").addEventListener("click", () => {
   let site = document.getElementById("site").value;
-  let limit = parseInt(document.getElementById("limit").value) * 60;
+  let limit = parseInt(document.getElementById("limit").value) * 60; // Convert minutes to seconds
   if (site && limit) {
     chrome.runtime.sendMessage(
       { action: "setSiteLimits", data: { [site]: limit } },
@@ -18,10 +18,10 @@ function updateUsageData() {
     dailyUsage.innerHTML = "<h3>Daily Usage</h3>";
     weeklyUsage.innerHTML = "<h3>Weekly Usage</h3>";
 
-    for (let site in response) {
-      let timeSpent = response[site].timeSpent;
+    for (let domain in response) {
+      let timeSpent = response[domain].timeSpent;
       let timeString = formatTime(timeSpent);
-      dailyUsage.innerHTML += `<p>${site}: ${timeString}</p>`;
+      dailyUsage.innerHTML += `<p>${domain}: ${timeString}</p>`;
     }
   });
 }
@@ -36,4 +36,4 @@ function formatTime(seconds) {
 }
 
 updateUsageData();
-setInterval(updateUsageData, 10000);
+setInterval(updateUsageData, 10000); // Update every 10 seconds

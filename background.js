@@ -1,21 +1,25 @@
 let timerData = {};
 let siteLimits = {};
 
-// Function to start the timer
-function startTimer(url) {
+// Start tracking time for the active tab
+function startTracking(url) {
   let domain = new URL(url).hostname;
+
   if (!timerData[domain]) {
-    timerData[domain] = { timeSpent: 0, limit: siteLimits[domain] || 0 };
+    timerData[domain] = { timeSpent: 0 };
   }
-  clearInterval(timerData.interval);
-  timerData.interval = setInterval(() => {
-    timerData[domain].timeSpent++;
-    chrome.storage.local.set({ timerData });
-    checkSiteLimit(domain);
+
+  // Update timer every second
+  setInterval(() => {
+    if (timerData[domain]) {
+      timerData[domain].timeSpent++;
+      chrome.storage.local.set({ timerData });
+      checkSiteLimit(domain);
+    }
   }, 1000);
 }
 
-// Function to check if the site limit is reached
+// Check if the site's time limit has been reached
 function checkSiteLimit(domain) {
   if (siteLimits[domain] && timerData[domain].timeSpent >= siteLimits[domain]) {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -26,23 +30,22 @@ function checkSiteLimit(domain) {
   }
 }
 
-// Listener for tab activation
+// Handle tab changes and updates
 chrome.tabs.onActivated.addListener((activeInfo) => {
   chrome.tabs.get(activeInfo.tabId, (tab) => {
     if (tab && tab.url) {
-      startTimer(tab.url);
+      startTracking(tab.url);
     }
   });
 });
 
-// Listener for tab updates
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && tab.url) {
-    startTimer(tab.url);
+    startTracking(tab.url);
   }
 });
 
-// Listener for messages from the popup
+// Respond to messages from content script or popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "getTimerData") {
     sendResponse(timerData);

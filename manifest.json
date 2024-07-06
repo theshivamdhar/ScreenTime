@@ -3,7 +3,7 @@
   "name": "ScreenTime",
   "version": "1.0",
   "description": "Tracks time spent on websites, blocks distracting sites, and provides usage reports.",
-  "permissions": ["activeTab", "storage", "notifications"],
+  "permissions": ["activeTab", "storage", "tabs"],
   "background": {
     "service_worker": "background.js"
   },
@@ -27,13 +27,5 @@
     "48": "icon48.png",
     "128": "icon128.png"
   },
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "icon16.png",
-      "48": "icon48.png",
-      "128": "icon128.png"
-    }
-  },
-  "options_page": "dashboard.html" // Add this line for the dashboard
+  "options_page": "dashboard.html"
 }
