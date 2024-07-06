@@ -4,21 +4,23 @@
   container.style.top = "10px";
   container.style.right = "10px";
   container.style.padding = "10px";
-  container.style.backgroundColor = "rgba(48, 25, 52, 0.9)"; // Dark purple background
-  container.style.color = "#e0e0e0"; // Light gray text
+  container.style.backgroundColor = "rgba(48, 25, 52, 0.9)";
+  container.style.color = "#e0e0e0";
   container.style.fontFamily = "Arial, sans-serif";
   container.style.fontSize = "14px";
   container.style.borderRadius = "5px";
   container.style.zIndex = "10000";
   container.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.5)";
-  container.style.border = "1px solid #8a2be2"; // Light purple border
+  container.style.border = "1px solid #8a2be2";
   document.body.appendChild(container);
 
   const infoLabel = document.createElement("div");
   container.appendChild(infoLabel);
 
-  let secondsSpent = 0;
   const currentUrl = new URL(window.location.href).hostname;
+  const storageKey = `screenTime_${currentUrl}`;
+
+  let secondsSpent = parseInt(localStorage.getItem(storageKey) || "0");
 
   function updateLabel() {
     const hours = Math.floor(secondsSpent / 3600);
@@ -32,48 +34,56 @@
   }
 
   function saveTimeSpent() {
+    localStorage.setItem(storageKey, secondsSpent.toString());
     try {
-      chrome.storage.local.get(["timeSpent"], (result) => {
-        const timeSpent = result.timeSpent || {};
-        timeSpent[currentUrl] = secondsSpent;
-        chrome.storage.local.set({ timeSpent });
-      });
+      chrome.storage.local.set({ [storageKey]: secondsSpent });
     } catch (error) {
-      console.error("Error saving time spent:", error);
+      console.error("Error saving to chrome.storage:", error);
     }
   }
 
-  // Load initial time spent
-  try {
-    chrome.storage.local.get(["timeSpent"], (result) => {
-      const timeSpent = result.timeSpent || {};
-      secondsSpent = timeSpent[currentUrl] || 0;
-      updateLabel();
-    });
-  } catch (error) {
-    console.error("Error loading initial time spent:", error);
-    updateLabel(); // Update label with default value
+  function syncWithChromeStorage() {
+    try {
+      chrome.storage.local.get([storageKey], (result) => {
+        const storedTime = result[storageKey];
+        if (storedTime !== undefined && storedTime > secondsSpent) {
+          secondsSpent = storedTime;
+          updateLabel();
+        }
+      });
+    } catch (error) {
+      console.error("Error syncing with chrome.storage:", error);
+    }
   }
 
   // Update the timer every second
   const intervalId = setInterval(() => {
-    try {
-      secondsSpent++;
-      updateLabel();
-      saveTimeSpent();
-    } catch (error) {
-      console.error("Error updating timer:", error);
-      clearInterval(intervalId); // Stop the interval if an error occurs
-    }
+    secondsSpent++;
+    updateLabel();
+    saveTimeSpent();
   }, 1000);
 
-  // Cleanup function
+  // Sync with chrome.storage every minute
+  const syncIntervalId = setInterval(syncWithChromeStorage, 60000);
+
+  // Initial update
+  updateLabel();
+  syncWithChromeStorage();
+
   function cleanup() {
     clearInterval(intervalId);
+    clearInterval(syncIntervalId);
     if (document.body.contains(container)) {
       container.remove();
     }
   }
+
+  // Listen for messages from the popup
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === "exitScreenTime") {
+      cleanup();
+    }
+  });
 
   // Listen for unload event to perform cleanup
   window.addEventListener("unload", cleanup);

@@ -47,6 +47,24 @@ h4 {
   color: #dda0dd; /* Plum color for time display */
 }
 
+#exit-button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 15px;
+  background-color: #4b0082; /* Indigo */
+  color: #e0e0e0;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#exit-button:hover {
+  background-color: #6a5acd; /* Slate blue */
+}
+
 ::-webkit-scrollbar {
   width: 8px;
 }
