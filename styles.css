@@ -1,15 +1,13 @@
 /* ... (existing styles) */
 
-#reset-button {
-  margin-top: 10px;
-  padding: 8px 15px;
-  background-color: #8a2be2;
-  color: #ffffff;
-  border: none;
+.site-time {
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #1e1e1e;
   border-radius: 5px;
-  cursor: pointer;
 }
 
-#reset-button:hover {
-  background-color: #7b1fa2;
+.time-display {
+  font-weight: bold;
+  color: #ffffff;
 }
