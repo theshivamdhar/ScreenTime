@@ -61,7 +61,7 @@ This project is licensed under the GNU General Public License v3 (GPLv3) - see t
 Encountering issues or have suggestions? We're here to help!
 
 - Check out our [FAQ](FAQ.md) for common questions
-- Report bugs or request features through our [Issue Tracker](https://github.com/theshivamdhar/screentime-counter/issues)
+- Report bugs or request features through our [Issue Tracker](ISSUE_TRACKER.md)
 - For additional support, contact us at workwithshivamd@gmail.com
 ---
 
