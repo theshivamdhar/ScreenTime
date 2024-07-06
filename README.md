@@ -1,63 +1,68 @@
-# ScreenTime Chrome Plugin
+# ScreenTime: Web Usage Tracker
 
-ScreenTime is a Chrome extension that helps you track the time spent on any website. It displays a highly visible timer in the top right corner of your screen and allows you to remove the timer if desired.
+ScreenTime is a Chrome extension designed to help users track and manage their time spent on various websites. With a sleek, non-intrusive interface, ScreenTime provides real-time insights into your browsing habits, empowering you to make informed decisions about your online activities.
 
 ## Features
 
-- **Time Tracking:** Shows the time spent on the current website in `hh:mm:ss` format.
-- **High Visibility:** Large and clearly visible timer to easily keep track of time.
-- **Removable Timer:** Includes a button to remove the timer if you no longer wish to see it.
-- **Movable Timer:** Drag the timer icon to reposition it anywhere on the page.
-- **Detailed Dashboard:** Click the timer icon to open a ScreenTime Dashboard with an overview of all tracked websites.
-- **Reset Option:** Ability to reset all timers or individual website timers.
-- **Exit Functionality:** Option to exit ScreenTime completely, clearing all data.
+- **Real-time Tracking**: Monitor time spent on each website with precision.
+- **Interactive Timer**: Highly visible, movable timer in the corner of your browser.
+- **Detailed Dashboard**: Comprehensive overview of all tracked websites and usage patterns.
+- **Customizable Alerts**: Set time limits and receive notifications to manage your browsing.
+- **Data Visualization**: Graphical representations of your web usage over time.
+- **Privacy-Focused**: All data stored locally, ensuring your browsing history remains private.
 
 ## Installation
 
-1. **Clone or download the repository:**
+1. **Download the Extension**:
+   - Visit the [ScreenTime GitHub releases page](https://github.com/theshivamdhar/ScreenTime.git).
+   - Download the latest release ZIP file.
 
-   ```bash
-      `git clone` https://github.com/theshivamdhar/ScreenTime.git
+2. **Extract the ZIP File**:
+   - Locate the downloaded ZIP file on your computer.
+   - Extract its contents to a folder of your choice.
 
-3. **Navigate to the Chrome Extensions page:**
-Open Chrome and go to `chrome://extensions/`.
+3. **Load the Extension in Chrome**:
+   - Open Google Chrome and navigate to `chrome://extensions/`.
+   - Enable "Developer mode" by toggling the switch in the top right corner.
+   - Click on "Load unpacked" button that appears after enabling Developer mode.
+   - Select the folder where you extracted the extension files.
 
-4. **Enable Developer Mode:**
-Toggle the "Developer mode" switch in the top right corner.
-
-5. **Load Unpacked Extension:**
-Click on the "Load unpacked" button and select the directory where you cloned or downloaded the repository.
+4. **Verify Installation**:
+   - ScreenTime should now appear in your list of installed extensions.
+   - You should see the ScreenTime icon in your Chrome toolbar.
 
 ## Usage
 
-- After installation, you'll see a timer icon (⏱️) on the top right of your browser window.
-- Hover over the icon to see time spent on the current site.
-- Click the icon to open the ScreenTime Dashboard.
-- Drag the icon to reposition it anywhere on the page.
-
-### ScreenTime Dashboard
-
-- View a list of all websites visited and time spent on each.
-- Use the "Reset All Timers" button to start fresh.
-- Click "Exit ScreenTime" to stop tracking and clear all data.
+1. **View Current Site Time**: Hover over the ScreenTime icon in your browser toolbar.
+2. **Access Dashboard**: Click the ScreenTime icon to open the full dashboard.
+3. **Move Timer**: Drag the timer to reposition it on your screen.
+4. **Set Limits**: In the dashboard, set time limits for specific websites.
+5. **Reset Data**: Use the "Reset All Timers" option in the dashboard settings.
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+We welcome contributions to ScreenTime! Here's how you can help:
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/AmazingFeature`).
+3. Make your changes.
+4. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+5. Push to the branch (`git push origin feature/AmazingFeature`).
+6. Open a Pull Request.
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
 ## License
 
 This project is licensed under the GNU General Public License v3 (GPLv3) - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
-
-- Thanks to all contributors who have helped shape ScreenTime.
-- Inspired by the need for better time management in our digital lives.
-
 ## Support
 
-If you encounter any problems or have any suggestions, please open an issue in this repository.
+Encountering issues or have suggestions? We're here to help!
 
+- Check out our [FAQ](FAQ.md) for common questions
+- Report bugs or request features through our [Issue Tracker](https://github.com/theshivamdhar/screentime-counter/issues)
+- For additional support, contact us at workwithshivamd@gmail.com
 ---
 
-Happy browsing, and may ScreenTime help you make the most of your online hours!
+Made with ❤️ by [Shivam Dhar](https://github.com/theshivamdhar)
