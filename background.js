@@ -11,19 +11,16 @@ function startTracking(domain) {
 // Check if the site's time limit has been reached
 function checkSiteLimit(domain) {
   if (siteLimits[domain] && timerData[domain].timeSpent >= siteLimits[domain]) {
-    chrome.storage.local.get(["siteLimits"], (data) => {
-      siteLimits = data.siteLimits || {};
-      chrome.tabs.query({ url: "*://*/*" }, (tabs) => {
-        tabs.forEach((tab) => {
-          if (new URL(tab.url).hostname === domain) {
-            chrome.scripting.executeScript({
-              target: { tabId: tab.id },
-              func: () => {
-                alert("You have reached your time limit for this site.");
-              },
-            });
-          }
-        });
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach((tab) => {
+        if (new URL(tab.url).hostname === domain) {
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            func: () => {
+              alert("You have reached your time limit for this site.");
+            },
+          });
+        }
       });
     });
   }
