@@ -1,54 +1,26 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>ScreenTime Dashboard</title>
+    <title>Dashboard</title>
     <style>
       body {
         font-family: Arial, sans-serif;
-        width: 400px;
         padding: 20px;
+        width: 600px;
+        height: 400px;
+        overflow-y: auto;
       }
-      h1 {
-        font-size: 20px;
-        margin-bottom: 20px;
+      .site {
+        margin-bottom: 15px;
       }
-      .data-container {
-        margin-top: 20px;
-      }
-      .data-item {
-        margin-bottom: 10px;
-      }
-      .time-wheel {
-        width: 200px;
-        height: 200px;
-        border: 10px solid #ccc;
-        border-radius: 50%;
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 24px;
-        margin: 20px auto;
-      }
-      .time-wheel span {
-        font-size: 18px;
-        position: absolute;
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
+      .site h4 {
+        margin: 0;
       }
     </style>
   </head>
   <body>
-    <h1>ScreenTime Dashboard</h1>
-    <div class="data-container">
-      <div class="data-item" id="total-time"></div>
-      <div class="data-item" id="daily-usage"></div>
-      <div class="data-item" id="weekly-usage"></div>
-    </div>
-    <div class="time-wheel" id="time-wheel">
-      <span id="time-wheel-text">0%</span>
-    </div>
+    <h1>Dashboard</h1>
+    <div id="dashboard-content"></div>
     <script src="dashboard.js"></script>
   </body>
 </html>
