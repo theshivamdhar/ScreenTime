@@ -79,15 +79,18 @@ document.addEventListener("DOMContentLoaded", () => {
       )
     ) {
       clearAllData().then(() => {
-        chrome.tabs.query({}, (tabs) => {
-          tabs.forEach((tab) => {
-            chrome.tabs.sendMessage(tab.id, { action: "exitScreenTime" });
-          });
-        });
+        chrome.runtime.sendMessage({ action: "exitScreenTime" });
         window.close();
       });
     }
   });
+
+  // Function to clear all data
+  function clearAllData() {
+    return new Promise((resolve) => {
+      chrome.storage.local.clear(resolve);
+    });
+  }
 
   // Cleanup function
   function cleanup() {

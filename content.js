@@ -7,6 +7,7 @@
     dragOffsetY;
   const currentUrl = new URL(window.location.href).hostname;
   const storageKey = `screenTime_${currentUrl}`;
+  let intervalId;
 
   function createTimer() {
     container = document.createElement("div");
@@ -56,16 +57,10 @@
       }
     });
 
-    // Click functionality
+    // Click functionality to open ScreenTime Dashboard
     timerIcon.addEventListener("click", (e) => {
       e.stopPropagation();
-      detailsPopup.style.display = "block";
-    });
-
-    document.addEventListener("click", (e) => {
-      if (!container.contains(e.target)) {
-        detailsPopup.style.display = "none";
-      }
+      chrome.runtime.sendMessage({ action: "openDashboard" });
     });
 
     // Dragging functionality
@@ -93,53 +88,52 @@
   }
 
   function startTimer() {
-    let secondsSpent = parseInt(localStorage.getItem(storageKey) || "0");
+    chrome.storage.local.get(storageKey, (result) => {
+      let secondsSpent = result[storageKey] || 0;
 
-    function updateLabel() {
-      const hours = Math.floor(secondsSpent / 3600);
-      const minutes = Math.floor((secondsSpent % 3600) / 60);
-      const seconds = secondsSpent % 60;
-      const timeString = `${hours.toString().padStart(2, "0")}:${minutes
-        .toString()
-        .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-      detailsPopup.textContent = `Time spent on ${currentUrl}: ${timeString}`;
-    }
+      function updateLabel() {
+        const hours = Math.floor(secondsSpent / 3600);
+        const minutes = Math.floor((secondsSpent % 3600) / 60);
+        const seconds = secondsSpent % 60;
+        const timeString = `${hours.toString().padStart(2, "0")}:${minutes
+          .toString()
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+        detailsPopup.textContent = `Time spent on ${currentUrl}: ${timeString}`;
+      }
 
-    function saveTimeSpent() {
-      localStorage.setItem(storageKey, secondsSpent.toString());
-      chrome.storage.local.set({ [storageKey]: secondsSpent });
-    }
+      function saveTimeSpent() {
+        chrome.storage.local.set({ [storageKey]: secondsSpent });
+      }
 
-    // Update the timer every second
-    const intervalId = setInterval(() => {
-      secondsSpent++;
+      // Update the timer every second
+      intervalId = setInterval(() => {
+        secondsSpent++;
+        updateLabel();
+        saveTimeSpent();
+      }, 1000);
+
+      // Initial update
       updateLabel();
-      saveTimeSpent();
-    }, 1000);
-
-    // Initial update
-    updateLabel();
-
-    return intervalId;
+    });
   }
 
   function cleanup() {
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
     if (container && document.body.contains(container)) {
       container.remove();
     }
   }
 
-  // Listen for messages from the popup
+  // Listen for messages from the popup or background script
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "exitScreenTime") {
       cleanup();
     } else if (request.action === "resetTimer") {
-      localStorage.setItem(storageKey, "0");
-      chrome.storage.local.set({ [storageKey]: 0 }, () => {
-        cleanup();
-        createTimer();
-        startTimer();
-      });
+      cleanup();
+      createTimer();
+      startTimer();
     }
   });
 
