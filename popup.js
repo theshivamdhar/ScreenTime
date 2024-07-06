@@ -67,12 +67,6 @@ document.addEventListener("DOMContentLoaded", () => {
     window.close(); // Close the popup
   });
 
-  // Reset all timers
-  resetAllButton.addEventListener("click", () => {
-    resetAllTimers();
-    window.close(); // Close the popup
-  });
-
   // Cleanup function
   function cleanup() {
     clearInterval(updateInterval);
