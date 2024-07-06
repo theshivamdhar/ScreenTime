@@ -6,7 +6,29 @@
   </head>
   <body>
     <h3>ScreenTime Dashboard</h3>
-    <div id="dashboard-content"></div>
+    <div id="usage-bar">
+      <h4>Website Usage</h4>
+      <canvas id="usageChart"></canvas>
+    </div>
+    <div id="daily-weekly-usage">
+      <h4>Daily & Weekly Usage</h4>
+      <div id="daily-usage"></div>
+      <div id="weekly-usage"></div>
+    </div>
+    <div id="todays-usage">
+      <h4>Today's Usage</h4>
+      <div id="todays-usage-list"></div>
+    </div>
+    <div id="block-site">
+      <h4>Block a Website</h4>
+      <input
+        type="text"
+        id="block-url"
+        placeholder="Enter website URL to block"
+      />
+      <button id="block-button">Block</button>
+    </div>
     <script src="popup.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </body>
 </html>

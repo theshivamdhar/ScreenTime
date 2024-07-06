@@ -13,7 +13,6 @@
   container.style.borderRadius = "15px";
   container.style.zIndex = "10000";
   container.style.boxShadow = "0 0 20px rgba(0, 0, 0, 0.5)";
-  container.style.cursor = "move"; // Indicate that the element is draggable
   document.body.appendChild(container);
 
   // Create and style the information label
@@ -70,29 +69,6 @@
     clearInterval(intervalId);
     container.remove();
   });
-
-  // Draggable functionality
-  let isDragging = false;
-  let offsetX = 0;
-  let offsetY = 0;
-
-  container.addEventListener("mousedown", (e) => {
-    isDragging = true;
-    offsetX = e.clientX - container.getBoundingClientRect().left;
-    offsetY = e.clientY - container.getBoundingClientRect().top;
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", () => {
-      isDragging = false;
-      document.removeEventListener("mousemove", onMouseMove);
-    });
-  });
-
-  function onMouseMove(e) {
-    if (isDragging) {
-      container.style.left = `${e.clientX - offsetX}px`;
-      container.style.top = `${e.clientY - offsetY}px`;
-    }
-  }
 
   // Initial label update
   updateLabel();
