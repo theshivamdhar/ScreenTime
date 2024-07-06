@@ -67,6 +67,11 @@ document.addEventListener("DOMContentLoaded", () => {
     window.close(); // Close the popup
   });
 
+  // Reset all timers
+  function resetAllTimers() {
+    chrome.storage.local.set({ timeSpent: {} }, updateTimeDisplay);
+  }
+
   // Cleanup function
   function cleanup() {
     clearInterval(updateInterval);
