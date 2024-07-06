@@ -39,6 +39,11 @@
 
     function saveTimeSpent() {
       localStorage.setItem(storageKey, secondsSpent.toString());
+      try {
+        chrome.storage.local.set({ [storageKey]: secondsSpent });
+      } catch (error) {
+        console.error("Error saving to chrome.storage:", error);
+      }
     }
 
     // Update the timer every second
