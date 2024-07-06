@@ -11,17 +11,17 @@
         padding: 10px;
         box-sizing: border-box;
       }
-      #timer-wrapper {
-        margin-bottom: 20px;
-      }
       #dashboard-content {
         overflow-y: auto;
-        max-height: 300px;
+        max-height: 350px;
       }
       .site {
         margin-bottom: 15px;
       }
       .site h4 {
+        margin: 0;
+      }
+      .site p {
         margin: 0;
       }
       button {
@@ -33,10 +33,6 @@
   </head>
   <body>
     <h3>ScreenTime Dashboard</h3>
-    <div id="timer-wrapper">
-      <div id="time-tracker-label">Time spent: 00:00:00</div>
-      <button id="mode-toggle">🌙</button>
-    </div>
     <div id="dashboard-content"></div>
     <script src="popup.js"></script>
   </body>

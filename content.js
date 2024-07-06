@@ -1,100 +1,125 @@
-const TIME_KEY = "timeSpentOnSite";
+(function () {
+  // Create and style the container for the information label and mode toggle button
+  const container = document.createElement("div");
+  container.id = "time-tracker-container";
+  container.style.position = "fixed";
+  container.style.top = "10px";
+  container.style.right = "10px";
+  container.style.padding = "20px 30px";
+  container.style.backgroundColor = "rgba(0, 0, 0, 0.9)";
+  container.style.color = "white";
+  container.style.fontFamily = "Arial, sans-serif";
+  container.style.fontSize = "24px";
+  container.style.borderRadius = "15px";
+  container.style.zIndex = "10000";
+  container.style.boxShadow = "0 0 20px rgba(0, 0, 0, 0.5)";
+  document.body.appendChild(container);
 
-// Create and style the timer label
-const timerLabel = document.createElement("div");
-timerLabel.id = "time-tracker-label";
-document.body.appendChild(timerLabel);
+  // Create and style the information label
+  const infoLabel = document.createElement("div");
+  infoLabel.id = "info-label";
+  infoLabel.style.marginBottom = "10px";
+  container.appendChild(infoLabel);
 
-// Create and style the mode toggle button
-const modeToggleButton = document.createElement("button");
-modeToggleButton.id = "mode-toggle";
-modeToggleButton.textContent = "🌙";
-document.body.appendChild(modeToggleButton);
+  // Create and style the mode toggle button
+  const modeToggleButton = document.createElement("button");
+  modeToggleButton.id = "mode-toggle";
+  modeToggleButton.textContent = "🌙";
+  modeToggleButton.style.padding = "10px 20px";
+  modeToggleButton.style.backgroundColor = "gray";
+  modeToggleButton.style.color = "white";
+  modeToggleButton.style.border = "none";
+  modeToggleButton.style.borderRadius = "5px";
+  modeToggleButton.style.cursor = "pointer";
+  container.appendChild(modeToggleButton);
 
-// Create a wrapper for the timer to make it movable
-const timerWrapper = document.createElement("div");
-timerWrapper.id = "timer-wrapper";
-timerWrapper.appendChild(timerLabel);
-document.body.appendChild(timerWrapper);
+  // Create and style the drag handle
+  const dragHandle = document.createElement("div");
+  dragHandle.id = "drag-handle";
+  dragHandle.style.width = "10px";
+  dragHandle.style.height = "10px";
+  dragHandle.style.backgroundColor = "white";
+  dragHandle.style.borderRadius = "50%";
+  dragHandle.style.position = "absolute";
+  dragHandle.style.top = "10px";
+  dragHandle.style.right = "10px";
+  dragHandle.style.cursor = "move";
+  container.appendChild(dragHandle);
 
-// Initialize storage and timer
-const domain = window.location.hostname;
-let startTime = Date.now();
-let isDarkMode = false;
+  // Initialize time spent variables
+  let secondsSpent = 0;
+  let isDarkMode = false;
 
-// Update time in storage
-function updateTime() {
-  const elapsed = Math.floor((Date.now() - startTime) / 1000);
-  chrome.storage.local.get(TIME_KEY, (data) => {
-    const existingTime = data[TIME_KEY] || {};
-    existingTime[domain] = elapsed;
-    chrome.storage.local.set({ [TIME_KEY]: existingTime });
-    displayTime(elapsed);
-  });
-}
-
-// Format time as hh:mm:ss
-function formatTime(seconds) {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = seconds % 60;
-  return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s
-    .toString()
-    .padStart(2, "0")}`;
-}
-
-// Display time in the label
-function displayTime(seconds) {
-  timerLabel.textContent = `Time spent: ${formatTime(seconds)}`;
-}
-
-// Start the timer
-updateTime();
-setInterval(updateTime, 1000); // Update every second
-
-// Handle mode toggle
-modeToggleButton.addEventListener("click", () => {
-  isDarkMode = !isDarkMode;
-  chrome.storage.local.set({ isDarkMode });
-  updateMode();
-});
-
-function updateMode() {
-  if (isDarkMode) {
-    document.body.classList.add("dark-mode");
-    modeToggleButton.textContent = "🌞";
-  } else {
-    document.body.classList.remove("dark-mode");
-    modeToggleButton.textContent = "🌙";
+  // Function to update the label with the time spent
+  function updateLabel() {
+    const hours = Math.floor(secondsSpent / 3600);
+    const minutes = Math.floor((secondsSpent % 3600) / 60);
+    const seconds = secondsSpent % 60;
+    infoLabel.textContent = `Time spent on this site: ${hours
+      .toString()
+      .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds
+      .toString()
+      .padStart(2, "0")}`;
   }
-}
 
-// Handle drag and drop for the timer
-let isDragging = false;
-let offsetX = 0;
-let offsetY = 0;
+  // Increment the time spent every second
+  const intervalId = setInterval(() => {
+    secondsSpent++;
+    updateLabel();
+    saveTimeSpent();
+  }, 1000);
 
-timerLabel.addEventListener("mousedown", (e) => {
-  isDragging = true;
-  offsetX = e.clientX - timerLabel.getBoundingClientRect().left;
-  offsetY = e.clientY - timerLabel.getBoundingClientRect().top;
-  document.addEventListener("mousemove", onMouseMove);
-  document.addEventListener("mouseup", () => {
-    isDragging = false;
-    document.removeEventListener("mousemove", onMouseMove);
-  });
-});
-
-function onMouseMove(e) {
-  if (isDragging) {
-    timerWrapper.style.left = `${e.clientX - offsetX}px`;
-    timerWrapper.style.top = `${e.clientY - offsetY}px`;
-    timerWrapper.style.position = "fixed"; // Ensure it's positioned correctly
+  // Save the time spent to storage
+  function saveTimeSpent() {
+    chrome.storage.local.get({ timeSpent: {} }, (result) => {
+      const timeSpent = result.timeSpent;
+      timeSpent[window.location.hostname] = secondsSpent;
+      chrome.storage.local.set({ timeSpent });
+    });
   }
-}
 
-// Initialize mode on page load
-chrome.storage.local.get("isDarkMode", (data) => {
-  isDarkMode = data.isDarkMode || false;
-  updateMode();
-});
+  // Load the current mode and apply it
+  chrome.storage.local.get({ isDarkMode: false }, (result) => {
+    isDarkMode = result.isDarkMode;
+    updateMode();
+  });
+
+  // Toggle dark/light mode
+  modeToggleButton.addEventListener("click", () => {
+    isDarkMode = !isDarkMode;
+    chrome.storage.local.set({ isDarkMode });
+    updateMode();
+  });
+
+  // Update mode styling
+  function updateMode() {
+    document.body.classList.toggle("dark-mode", isDarkMode);
+    modeToggleButton.textContent = isDarkMode ? "🌞" : "🌙";
+  }
+
+  // Drag and drop functionality
+  let isDragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  dragHandle.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    offsetX = e.clientX - container.getBoundingClientRect().left;
+    offsetY = e.clientY - container.getBoundingClientRect().top;
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+      document.removeEventListener("mousemove", onMouseMove);
+    });
+  });
+
+  function onMouseMove(e) {
+    if (isDragging) {
+      container.style.left = `${e.clientX - offsetX}px`;
+      container.style.top = `${e.clientY - offsetY}px`;
+    }
+  }
+
+  // Initial label update
+  updateLabel();
+})();
