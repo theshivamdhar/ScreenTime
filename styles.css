@@ -1,3 +1,13 @@
+body {
+  font-family: Arial, sans-serif;
+  width: 300px;
+  height: 400px;
+  margin: 0;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
 body.dark-mode {
   background-color: #121212;
   color: #e0e0e0;
@@ -15,22 +25,59 @@ body.dark-mode {
   border-radius: 15px;
   z-index: 10000;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-}
-
-.dark-mode #time-tracker-container {
-  background-color: rgba(255, 255, 255, 0.8);
-  color: black;
+  cursor: move; /* Indicate that the element is draggable */
 }
 
 #info-label {
   margin-bottom: 10px;
 }
 
-#mode-toggle {
+#exit-button {
   padding: 10px 20px;
-  background-color: gray;
+  background-color: red;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+#exit-button:hover {
+  opacity: 0.8;
+}
+
+#dashboard-content {
+  overflow-y: auto;
+  max-height: 350px;
+}
+
+.site {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+}
+
+.dark-mode .site {
+  background-color: #2e2e2e;
+}
+
+.site h4 {
+  margin: 0;
+}
+
+.site p {
+  margin: 0;
+}
+
+button {
+  padding: 5px 10px;
+  margin: 5px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.8;
 }
