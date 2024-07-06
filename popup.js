@@ -58,6 +58,30 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initial display
   updateTimeDisplay();
 
+  // Reset All Timers functionality
+  resetButton.addEventListener("click", () => {
+    if (confirm("Are you sure you want to reset all timers?")) {
+      chrome.storage.local.get(null, (items) => {
+        const resetItems = {};
+        for (const key in items) {
+          if (key.startsWith("screenTime_")) {
+            resetItems[key] = 0;
+          }
+        }
+        chrome.storage.local.set(resetItems, () => {
+          // Also reset localStorage
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith("screenTime_")) {
+              localStorage.setItem(key, "0");
+            }
+          }
+          updateTimeDisplay();
+        });
+      });
+    }
+  });
+
   // Exit ScreenTime functionality
   exitButton.addEventListener("click", () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
