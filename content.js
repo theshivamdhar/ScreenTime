@@ -73,7 +73,9 @@
       transition: "all 0.2s ease",
       transform: "translateY(10px)",
       opacity: "0",
-      width: "200px",
+      width: "max-content",
+      maxWidth: "300px",
+      wordWrap: "break-word",
     });
     container.appendChild(detailsPopup);
 
@@ -97,6 +99,7 @@
       detailsPopup.style.transform = "translateY(0)";
       detailsPopup.style.opacity = "1";
     });
+    adjustPopupPosition();
   }
 
   function hideDetails() {
@@ -111,6 +114,29 @@
     }, 200);
   }
 
+  function adjustPopupPosition() {
+    const containerRect = container.getBoundingClientRect();
+    const popupRect = detailsPopup.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    if (containerRect.right + popupRect.width > viewportWidth) {
+      detailsPopup.style.right = "auto";
+      detailsPopup.style.left = "0";
+    } else {
+      detailsPopup.style.right = "0";
+      detailsPopup.style.left = "auto";
+    }
+
+    if (containerRect.bottom + popupRect.height > viewportHeight) {
+      detailsPopup.style.top = "auto";
+      detailsPopup.style.bottom = "120%";
+    } else {
+      detailsPopup.style.top = "120%";
+      detailsPopup.style.bottom = "auto";
+    }
+  }
+
   function startDragging(e) {
     isDragging = true;
     dragOffsetX = e.clientX - container.offsetLeft;
@@ -119,8 +145,13 @@
 
   function drag(e) {
     if (isDragging) {
-      container.style.left = `${e.clientX - dragOffsetX}px`;
-      container.style.top = `${e.clientY - dragOffsetY}px`;
+      const newLeft = e.clientX - dragOffsetX;
+      const newTop = e.clientY - dragOffsetY;
+      const maxX = window.innerWidth - container.offsetWidth;
+      const maxY = window.innerHeight - container.offsetHeight;
+
+      container.style.left = `${Math.max(0, Math.min(newLeft, maxX))}px`;
+      container.style.top = `${Math.max(0, Math.min(newTop, maxY))}px`;
       container.style.right = "auto";
     }
   }
