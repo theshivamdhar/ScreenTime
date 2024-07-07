@@ -2,9 +2,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const websiteTimesElem = document.getElementById("website-times");
   const exitButton = document.getElementById("exit-button");
   const resetButton = document.getElementById("reset-button");
+  let updateInterval;
 
   function updateTimeDisplay() {
     chrome.storage.local.get(null, (items) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error retrieving data:", chrome.runtime.lastError);
+        return;
+      }
+
       websiteTimesElem.innerHTML = "";
       for (const [key, time] of Object.entries(items)) {
         if (key.startsWith("screenTime_")) {
@@ -33,68 +39,92 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function clearAllData() {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       chrome.storage.local.get(null, (items) => {
+        if (chrome.runtime.lastError) {
+          reject(chrome.runtime.lastError);
+          return;
+        }
+
         const keysToRemove = Object.keys(items).filter((key) =>
           key.startsWith("screenTime_")
         );
-        chrome.storage.local.remove(keysToRemove, resolve);
+        chrome.storage.local.remove(keysToRemove, () => {
+          if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError);
+          } else {
+            resolve();
+          }
+        });
       });
     });
   }
 
-  // Update time display every second
-  const updateInterval = setInterval(updateTimeDisplay, 1000);
+  function resetAllTimers() {
+    chrome.storage.local.get(null, (items) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error retrieving data:", chrome.runtime.lastError);
+        return;
+      }
 
-  // Initial display
-  updateTimeDisplay();
-
-  // Reset All Timers functionality
-  resetButton.addEventListener("click", () => {
-    if (confirm("Are you sure you want to reset all timers?")) {
-      chrome.storage.local.get(null, (items) => {
-        const resetItems = {};
-        for (const key in items) {
-          if (key.startsWith("screenTime_")) {
-            resetItems[key] = 0;
-          }
+      const resetItems = {};
+      for (const key in items) {
+        if (key.startsWith("screenTime_")) {
+          resetItems[key] = 0;
         }
-        chrome.storage.local.set(resetItems, () => {
+      }
+      chrome.storage.local.set(resetItems, () => {
+        if (chrome.runtime.lastError) {
+          console.error("Error resetting timers:", chrome.runtime.lastError);
+        } else {
           updateTimeDisplay();
           chrome.tabs.query({}, (tabs) => {
             tabs.forEach((tab) => {
-              chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                func: () => {
-                  chrome.runtime.sendMessage({ action: "resetTimer" });
-                },
-              });
+              if (
+                tab.url.startsWith("http://") ||
+                tab.url.startsWith("https://")
+              ) {
+                chrome.tabs.sendMessage(tab.id, { action: "resetTimer" });
+              }
             });
           });
-        });
+        }
       });
-    }
-  });
+    });
+  }
 
-  // Exit ScreenTime functionality
-  exitButton.addEventListener("click", () => {
-    if (
-      confirm(
-        "Are you sure you want to exit ScreenTime? This will clear all data."
-      )
-    ) {
-      clearAllData().then(() => {
-        chrome.runtime.sendMessage({ action: "exitScreenTime" });
-        window.close();
-      });
-    }
-  });
+  function init() {
+    updateInterval = setInterval(updateTimeDisplay, 1000);
+    updateTimeDisplay();
 
-  // Cleanup function
+    resetButton.addEventListener("click", () => {
+      if (confirm("Are you sure you want to reset all timers?")) {
+        resetAllTimers();
+      }
+    });
+
+    exitButton.addEventListener("click", () => {
+      if (
+        confirm(
+          "Are you sure you want to exit ScreenTime? This will clear all data."
+        )
+      ) {
+        clearAllData()
+          .then(() => {
+            chrome.runtime.sendMessage({ action: "exitScreenTime" });
+            window.close();
+          })
+          .catch((error) => {
+            console.error("Error clearing data:", error);
+          });
+      }
+    });
+  }
+
   function cleanup() {
     clearInterval(updateInterval);
   }
 
-  // Listen for unload event to perform cleanup
+  init();
   window.addEventListener("unload", cleanup);
 });

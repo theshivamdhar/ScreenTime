@@ -1,65 +1,72 @@
 (function () {
-  let container,
-    timerIcon,
-    detailsPopup,
-    isDragging = false,
+  const currentUrl = new URL(window.location.href).hostname;
+  if (!currentUrl) return; // Exit if URL is invalid
+
+  const storageKey = `screenTime_${currentUrl}`;
+  let container, timerIcon, detailsPopup, intervalId;
+  let isDragging = false,
     dragOffsetX,
     dragOffsetY;
-  const currentUrl = new URL(window.location.href).hostname;
-  const storageKey = `screenTime_${currentUrl}`;
-  let intervalId;
 
   function createTimer() {
     if (container) return; // Avoid creating the timer multiple times
 
     container = document.createElement("div");
-    container.style.position = "fixed";
-    container.style.top = "10px";
-    container.style.right = "10px";
-    container.style.zIndex = "10000";
-    container.style.cursor = "move";
+    Object.assign(container.style, {
+      position: "fixed",
+      top: "10px",
+      right: "10px",
+      zIndex: "10000",
+      cursor: "move",
+    });
     document.body.appendChild(container);
 
     timerIcon = document.createElement("div");
     timerIcon.innerHTML = "⏱️";
-    timerIcon.style.fontSize = "24px";
-    timerIcon.style.width = "30px";
-    timerIcon.style.height = "30px";
-    timerIcon.style.display = "flex";
-    timerIcon.style.justifyContent = "center";
-    timerIcon.style.alignItems = "center";
-    timerIcon.style.backgroundColor = "rgba(48, 25, 52, 0.9)";
-    timerIcon.style.borderRadius = "50%";
-    timerIcon.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.5)";
+    Object.assign(timerIcon.style, {
+      fontSize: "24px",
+      width: "30px",
+      height: "30px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "rgba(48, 25, 52, 0.9)",
+      borderRadius: "50%",
+      boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
+    });
     container.appendChild(timerIcon);
 
     detailsPopup = document.createElement("div");
-    detailsPopup.style.position = "absolute";
-    detailsPopup.style.top = "100%";
-    detailsPopup.style.right = "0";
-    detailsPopup.style.padding = "10px";
-    detailsPopup.style.backgroundColor = "rgba(48, 25, 52, 0.9)";
-    detailsPopup.style.color = "#e0e0e0";
-    detailsPopup.style.fontFamily = "Arial, sans-serif";
-    detailsPopup.style.fontSize = "14px";
-    detailsPopup.style.borderRadius = "5px";
-    detailsPopup.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.5)";
-    detailsPopup.style.border = "1px solid #8a2be2";
-    detailsPopup.style.display = "none";
+    Object.assign(detailsPopup.style, {
+      position: "absolute",
+      top: "100%",
+      right: "0",
+      padding: "10px",
+      backgroundColor: "rgba(48, 25, 52, 0.9)",
+      color: "#e0e0e0",
+      fontFamily: "Arial, sans-serif",
+      fontSize: "14px",
+      borderRadius: "5px",
+      boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
+      border: "1px solid #8a2be2",
+      display: "none",
+    });
     container.appendChild(detailsPopup);
 
-    // Hover functionality
-    timerIcon.addEventListener("mouseenter", () => {
-      detailsPopup.style.display = "block";
-    });
+    addEventListeners();
+  }
 
+  function addEventListeners() {
+    timerIcon.addEventListener(
+      "mouseenter",
+      () => (detailsPopup.style.display = "block")
+    );
     timerIcon.addEventListener("mouseleave", () => {
       if (!detailsPopup.contains(document.activeElement)) {
         detailsPopup.style.display = "none";
       }
     });
 
-    // Dragging functionality
     container.addEventListener("mousedown", startDragging);
     document.addEventListener("mousemove", drag);
     document.addEventListener("mouseup", stopDragging);
@@ -73,8 +80,8 @@
 
   function drag(e) {
     if (isDragging) {
-      container.style.left = e.clientX - dragOffsetX + "px";
-      container.style.top = e.clientY - dragOffsetY + "px";
+      container.style.left = `${e.clientX - dragOffsetX}px`;
+      container.style.top = `${e.clientY - dragOffsetY}px`;
       container.style.right = "auto";
     }
   }
@@ -85,6 +92,11 @@
 
   function startTimer() {
     chrome.storage.local.get(storageKey, (result) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error retrieving data:", chrome.runtime.lastError);
+        return;
+      }
+
       let secondsSpent = result[storageKey] || 0;
 
       function updateLabel() {
@@ -98,17 +110,19 @@
       }
 
       function saveTimeSpent() {
-        chrome.storage.local.set({ [storageKey]: secondsSpent });
+        chrome.storage.local.set({ [storageKey]: secondsSpent }, () => {
+          if (chrome.runtime.lastError) {
+            console.error("Error saving data:", chrome.runtime.lastError);
+          }
+        });
       }
 
-      // Update the timer every second
       intervalId = setInterval(() => {
         secondsSpent++;
         updateLabel();
         saveTimeSpent();
       }, 1000);
 
-      // Initial update
       updateLabel();
     });
   }
@@ -129,11 +143,14 @@
       sendResponse({ success: true });
     }
     if (request.action === "resetTimer") {
-      chrome.storage.local.set({ [storageKey]: 0 });
+      chrome.storage.local.set({ [storageKey]: 0 }, () => {
+        if (chrome.runtime.lastError) {
+          console.error("Error resetting timer:", chrome.runtime.lastError);
+        }
+      });
     }
   });
 
-  // Initialize
   createTimer();
   startTimer();
 })();
