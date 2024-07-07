@@ -3,11 +3,13 @@
   let isDragging = false,
     dragOffsetX,
     dragOffsetY;
+  let secondsSpent = 0;
   const currentUrl = new URL(window.location.href).hostname;
   const storageKey = `screenTime_${currentUrl}`;
+  let isExited = false;
 
   function init() {
-    if (!currentUrl) return; // Exit if URL is invalid
+    if (!currentUrl || isExited) return; // Exit if URL is invalid or extension has been exited
 
     createTimer();
     startTimer();
@@ -138,8 +140,6 @@
   }
 
   function startTimer() {
-    let secondsSpent = 0;
-
     function updateLabel() {
       const hours = Math.floor(secondsSpent / 3600);
       const minutes = Math.floor((secondsSpent % 3600) / 60);
@@ -199,13 +199,13 @@
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "exitScreenTime") {
       cleanup();
+      isExited = true;
     }
     if (request.action === "resetTimer") {
       chrome.storage.local.set({ [storageKey]: 0 }, () => {
         if (chrome.runtime.lastError) {
           console.error("Error resetting timer:", chrome.runtime.lastError);
         } else {
-          // Reset the timer immediately in the content script
           secondsSpent = 0;
           updateLabel();
         }

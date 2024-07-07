@@ -51,6 +51,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function resetAllTimers() {
+    const loadingSpinner = document.createElement("span");
+    loadingSpinner.className = "loading";
+    resetButton.appendChild(loadingSpinner);
+    resetButton.disabled = true;
+
     chrome.storage.local.get(null, (items) => {
       if (chrome.runtime.lastError) {
         console.error("Error retrieving data:", chrome.runtime.lastError);
@@ -79,6 +84,10 @@ document.addEventListener("DOMContentLoaded", () => {
             });
           });
         }
+        setTimeout(() => {
+          resetButton.removeChild(loadingSpinner);
+          resetButton.disabled = false;
+        }, 1000);
       });
     });
   }

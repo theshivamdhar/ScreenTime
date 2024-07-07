@@ -1,92 +1,152 @@
 body.dark-purple-theme {
-  background-color: #12071a;
+  background-color: #080410;
   color: #e0e0e0;
-  font-family: Arial, sans-serif;
-  background-image: linear-gradient(45deg, #12071a, #2a0f3d);
+  font-family: "Roboto", sans-serif;
+  background-image: linear-gradient(45deg, #080410, #1a0b2e);
   margin: 0;
   padding: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #container {
-  padding: 20px;
-  background-color: rgba(48, 25, 52, 0.75);
-  border-radius: 15px;
-  box-shadow: 0 0 30px rgba(138, 43, 226, 0.3);
-  backdrop-filter: blur(10px);
-  min-width: 300px;
+  padding: 30px;
+  background-color: rgba(26, 11, 46, 0.6);
+  border-radius: 20px;
+  box-shadow: 0 0 40px rgba(138, 43, 226, 0.3);
+  backdrop-filter: blur(20px);
+  min-width: 320px;
   max-width: 500px;
-  margin: 20px auto;
+  transform: perspective(1000px) rotateX(5deg);
+  transition: all 0.3s ease;
+}
+
+#container:hover {
+  transform: perspective(1000px) rotateX(0deg);
 }
 
 h1 {
-  color: #a64dff;
+  color: #b76eff;
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 28px;
-  text-shadow: 0 0 10px rgba(166, 77, 255, 0.5);
+  margin-bottom: 30px;
+  font-size: 32px;
+  text-shadow: 0 0 15px rgba(183, 110, 255, 0.7);
+  letter-spacing: 2px;
 }
 
 h2 {
-  color: #8a2be2;
-  font-size: 20px;
-  margin-top: 20px;
-  margin-bottom: 10px;
+  color: #9d4edd;
+  font-size: 22px;
+  margin-top: 25px;
+  margin-bottom: 15px;
 }
 
 button {
-  background-color: #8a2be2;
+  background-color: #6a0dad;
   color: #fff;
   border: none;
-  padding: 12px 20px;
-  margin: 10px 5px;
+  padding: 15px 25px;
+  margin: 15px 5px;
   cursor: pointer;
-  border-radius: 25px;
-  font-size: 16px;
+  border-radius: 30px;
+  font-size: 18px;
   transition: all 0.3s ease;
-  box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
+  box-shadow: 0 0 20px rgba(138, 43, 226, 0.4);
   display: block;
   width: calc(100% - 10px);
+  position: relative;
+  overflow: hidden;
+}
+
+button::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transform: rotate(45deg);
+  transition: all 0.3s ease;
+}
+
+button:hover::before {
+  left: 100%;
 }
 
 button:hover {
-  background-color: #7326c7;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(138, 43, 226, 0.5);
+  background-color: #8a2be2;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(138, 43, 226, 0.6);
 }
 
 .site-time {
-  margin: 15px 0;
-  padding: 10px;
-  background-color: rgba(30, 30, 30, 0.6);
-  border-radius: 10px;
+  margin: 20px 0;
+  padding: 15px;
+  background-color: rgba(30, 30, 30, 0.4);
+  border-radius: 15px;
   transition: all 0.3s ease;
+  border: 1px solid rgba(138, 43, 226, 0.3);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .site-time:hover {
-  background-color: rgba(48, 25, 52, 0.8);
-  transform: translateX(5px);
+  background-color: rgba(48, 25, 52, 0.6);
+  transform: translateX(5px) translateY(-2px);
+  box-shadow: 0 8px 20px rgba(138, 43, 226, 0.3);
 }
 
 .time-display {
   float: right;
   font-weight: bold;
-  color: #a64dff;
+  color: #b76eff;
+  text-shadow: 0 0 10px rgba(183, 110, 255, 0.7);
 }
 
-/* Add a custom scrollbar */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(30, 30, 30, 0.6);
+  background: rgba(30, 30, 30, 0.4);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(138, 43, 226, 0.5);
-  border-radius: 5px;
+  background: rgba(138, 43, 226, 0.6);
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(138, 43, 226, 0.4);
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(138, 43, 226, 0.8);
+}
+
+/* Loading animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(183, 110, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #b76eff;
+  animation: spin 1s ease-in-out infinite;
+  margin-left: 10px;
 }
