@@ -63,7 +63,12 @@ document.addEventListener("DOMContentLoaded", () => {
           updateTimeDisplay();
           chrome.tabs.query({}, (tabs) => {
             tabs.forEach((tab) => {
-              chrome.tabs.sendMessage(tab.id, { action: "resetTimer" });
+              chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                func: () => {
+                  chrome.runtime.sendMessage({ action: "resetTimer" });
+                },
+              });
             });
           });
         });

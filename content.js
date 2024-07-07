@@ -120,21 +120,17 @@
     }
   }
 
-  // Listen for messages from the popup or background script
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "exitScreenTime") {
       cleanup();
-    } else if (request.action === "resetTimer") {
-      cleanup();
-      createTimer();
-      startTimer();
+      sendResponse({ success: true });
+    }
+    if (request.action === "resetTimer") {
+      chrome.storage.local.set({ [storageKey]: 0 });
     }
   });
 
-  // Listen for unload event to perform cleanup
-  window.addEventListener("unload", cleanup);
-
-  // Initialize the timer
+  // Initialize
   createTimer();
   startTimer();
 })();
