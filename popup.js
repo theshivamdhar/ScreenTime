@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      websiteTimesElem.innerHTML = "";
+      websiteTimesElem.innerHTML = "<h2>Websites visited today:</h2>";
       for (const [key, time] of Object.entries(items)) {
         if (key.startsWith("screenTime_")) {
           const site = key.replace("screenTime_", "");
@@ -111,7 +111,16 @@ document.addEventListener("DOMContentLoaded", () => {
       ) {
         clearAllData()
           .then(() => {
-            chrome.runtime.sendMessage({ action: "exitScreenTime" });
+            chrome.tabs.query({}, (tabs) => {
+              tabs.forEach((tab) => {
+                if (
+                  tab.url.startsWith("http://") ||
+                  tab.url.startsWith("https://")
+                ) {
+                  chrome.tabs.sendMessage(tab.id, { action: "exitScreenTime" });
+                }
+              });
+            });
             window.close();
           })
           .catch((error) => {
@@ -125,6 +134,4 @@ document.addEventListener("DOMContentLoaded", () => {
     clearInterval(updateInterval);
   }
 
-  init();
-  window.addEventListener("unload", cleanup);
-});
+  init
