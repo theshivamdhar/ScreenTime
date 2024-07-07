@@ -12,22 +12,27 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           error: chrome.runtime.lastError.message,
         });
       } else {
-        chrome.storage.local.set({ screenTimeExited: true }, () => {
-          if (chrome.runtime.lastError) {
-            console.error(
-              "Error setting exit status:",
-              chrome.runtime.lastError
-            );
-            sendResponse({
-              success: false,
-              error: chrome.runtime.lastError.message,
-            });
-          } else {
-            sendResponse({ success: true });
-          }
+        chrome.tabs.query({}, (tabs) => {
+          tabs.forEach((tab) => {
+            if (
+              tab.url.startsWith("http://") ||
+              tab.url.startsWith("https://")
+            ) {
+              chrome.tabs.sendMessage(tab.id, { action: "exitScreenTime" });
+            }
+          });
         });
+        sendResponse({ success: true });
       }
     });
     return true; // Indicates that the response will be sent asynchronously
+  } else if (request.action === "syncTime") {
+    const { url, time } = request;
+    const storageKey = `screenTime_${new URL(url).hostname}`;
+    chrome.storage.local.set({ [storageKey]: time }, () => {
+      if (chrome.runtime.lastError) {
+        console.error("Error syncing time:", chrome.runtime.lastError);
+      }
+    });
   }
 });

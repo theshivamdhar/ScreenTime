@@ -165,7 +165,7 @@
 
   function drag(e) {
     if (isDragging) {
-      const padding = 10; // Padding from the edge of the viewport
+      const padding = 10;
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
       const containerWidth = container.offsetWidth;
@@ -174,7 +174,6 @@
       let newLeft = e.clientX - dragOffsetX;
       let newTop = e.clientY - dragOffsetY;
 
-      // Ensure the container stays within the viewport bounds
       newLeft = Math.max(
         padding,
         Math.min(newLeft, viewportWidth - containerWidth - padding)
@@ -232,6 +231,7 @@
       secondsSpent++;
       updateLabel();
       saveTimeSpent();
+      syncTime();
     }, 1000);
   }
 
@@ -253,6 +253,14 @@
       if (chrome.runtime.lastError) {
         console.error("Error saving time data:", chrome.runtime.lastError);
       }
+    });
+  }
+
+  function syncTime() {
+    chrome.runtime.sendMessage({
+      action: "syncTime",
+      url: window.location.href,
+      time: secondsSpent,
     });
   }
 
@@ -280,9 +288,9 @@
     if (request.action === "exitScreenTime") {
       cleanup();
       isExited = true;
-      chrome.storage.local.set({ screenTimeExited: true }, () => {
+      chrome.storage.local.remove(storageKey, () => {
         if (chrome.runtime.lastError) {
-          console.error("Error setting exit status:", chrome.runtime.lastError);
+          console.error("Error removing time data:", chrome.runtime.lastError);
         }
       });
     }

@@ -81,17 +81,25 @@ document.addEventListener("DOMContentLoaded", () => {
       if (chrome.runtime.lastError) {
         console.error("Error exiting ScreenTime:", chrome.runtime.lastError);
       } else if (response && response.success) {
-        chrome.tabs.query({}, (tabs) => {
-          tabs.forEach((tab) => {
-            if (
-              tab.url.startsWith("http://") ||
-              tab.url.startsWith("https://")
-            ) {
-              chrome.tabs.sendMessage(tab.id, { action: "exitScreenTime" });
-            }
-          });
+        chrome.storage.local.clear(() => {
+          if (chrome.runtime.lastError) {
+            console.error("Error clearing storage:", chrome.runtime.lastError);
+          } else {
+            chrome.tabs.query({}, (tabs) => {
+              tabs.forEach((tab) => {
+                if (
+                  tab.url.startsWith("http://") ||
+                  tab.url.startsWith("https://")
+                ) {
+                  chrome.tabs.sendMessage(tab.id, {
+                    action: "exitScreenTime",
+                  });
+                }
+              });
+            });
+            window.close();
+          }
         });
-        window.close();
       } else {
         console.error(
           "Failed to exit ScreenTime:",
