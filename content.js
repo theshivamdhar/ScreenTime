@@ -80,14 +80,23 @@
   }
 
   function positionTimerWithinViewport() {
-    const padding = 10; // Padding from the edge of the viewport
+    const padding = 20; // Increased padding from the edge of the viewport
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const containerWidth = 50; // Width of the timer icon
     const containerHeight = 50; // Height of the timer icon
 
-    let left = viewportWidth - containerWidth - padding;
+    // Calculate the maximum allowed positions
+    const maxLeft = viewportWidth - containerWidth - padding;
+    const maxTop = viewportHeight - containerHeight - padding;
+
+    // Set initial position (top-right corner with increased padding)
+    let left = maxLeft;
     let top = padding;
+
+    // Ensure the container stays within the viewport bounds
+    left = Math.max(padding, Math.min(left, maxLeft));
+    top = Math.max(padding, Math.min(top, maxTop));
 
     container.style.left = `${left}px`;
     container.style.top = `${top}px`;
