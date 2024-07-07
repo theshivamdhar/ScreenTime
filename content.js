@@ -29,47 +29,68 @@
     timerIcon = document.createElement("div");
     timerIcon.innerHTML = "⏱️";
     Object.assign(timerIcon.style, {
-      fontSize: "24px",
-      width: "30px",
-      height: "30px",
+      fontSize: "32px",
+      width: "50px",
+      height: "50px",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: "rgba(48, 25, 52, 0.9)",
+      backgroundColor: "rgba(138, 43, 226, 0.7)",
       borderRadius: "50%",
-      boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
+      boxShadow: "0 0 15px rgba(138, 43, 226, 0.5)",
+      transition: "all 0.3s ease",
     });
     container.appendChild(timerIcon);
 
     detailsPopup = document.createElement("div");
     Object.assign(detailsPopup.style, {
       position: "absolute",
-      top: "100%",
+      top: "120%",
       right: "0",
-      padding: "10px",
-      backgroundColor: "rgba(48, 25, 52, 0.9)",
+      padding: "15px",
+      backgroundColor: "rgba(48, 25, 52, 0.85)",
       color: "#e0e0e0",
       fontFamily: "Arial, sans-serif",
-      fontSize: "14px",
-      borderRadius: "5px",
-      boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
-      border: "1px solid #8a2be2",
+      fontSize: "16px",
+      borderRadius: "10px",
+      boxShadow: "0 0 20px rgba(138, 43, 226, 0.5)",
+      border: "1px solid rgba(138, 43, 226, 0.5)",
+      backdropFilter: "blur(5px)",
       display: "none",
+      transition: "all 0.3s ease",
+      transform: "translateY(10px)",
+      opacity: "0",
     });
     container.appendChild(detailsPopup);
 
     addEventListeners();
+    pulseAnimation();
   }
 
   function addEventListeners() {
-    timerIcon.addEventListener(
-      "mouseenter",
-      () => (detailsPopup.style.display = "block")
-    );
+    timerIcon.addEventListener("mouseenter", () => {
+      timerIcon.style.transform = "scale(1.1)";
+      timerIcon.style.boxShadow = "0 0 20px rgba(138, 43, 226, 0.8)";
+      detailsPopup.style.display = "block";
+      setTimeout(() => {
+        detailsPopup.style.transform = "translateY(0)";
+        detailsPopup.style.opacity = "1";
+      }, 50);
+    });
+
     timerIcon.addEventListener("mouseleave", () => {
-      if (!detailsPopup.contains(document.activeElement)) {
-        detailsPopup.style.display = "none";
-      }
+      timerIcon.style.transform = "scale(1)";
+      timerIcon.style.boxShadow = "0 0 15px rgba(138, 43, 226, 0.5)";
+    });
+
+    container.addEventListener("mouseleave", () => {
+      detailsPopup.style.transform = "translateY(10px)";
+      detailsPopup.style.opacity = "0";
+      setTimeout(() => {
+        if (!detailsPopup.contains(document.activeElement)) {
+          detailsPopup.style.display = "none";
+        }
+      }, 300);
     });
 
     container.addEventListener("mousedown", startDragging);
@@ -93,6 +114,29 @@
 
   function stopDragging() {
     isDragging = false;
+  }
+
+  function pulseAnimation() {
+    timerIcon.animate(
+      [
+        {
+          transform: "scale(1)",
+          boxShadow: "0 0 15px rgba(138, 43, 226, 0.5)",
+        },
+        {
+          transform: "scale(1.05)",
+          boxShadow: "0 0 20px rgba(138, 43, 226, 0.8)",
+        },
+        {
+          transform: "scale(1)",
+          boxShadow: "0 0 15px rgba(138, 43, 226, 0.5)",
+        },
+      ],
+      {
+        duration: 2000,
+        iterations: Infinity,
+      }
+    );
   }
 
   function startTimer() {
