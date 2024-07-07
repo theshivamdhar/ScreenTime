@@ -10,6 +10,8 @@
   let intervalId;
 
   function createTimer() {
+    if (container) return; // Avoid creating the timer multiple times
+
     container = document.createElement("div");
     container.style.position = "fixed";
     container.style.top = "10px";
@@ -118,6 +120,7 @@
     if (container && document.body.contains(container)) {
       container.remove();
     }
+    container = null;
   }
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
