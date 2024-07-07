@@ -94,6 +94,34 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function exitScreenTime() {
+    clearAllData()
+      .then(() => {
+        chrome.tabs.query({}, (tabs) => {
+          tabs.forEach((tab) => {
+            if (
+              tab.url.startsWith("http://") ||
+              tab.url.startsWith("https://")
+            ) {
+              chrome.tabs.sendMessage(tab.id, { action: "exitScreenTime" });
+            }
+          });
+        });
+        chrome.storage.local.set({ screenTimeExited: true }, () => {
+          if (chrome.runtime.lastError) {
+            console.error(
+              "Error setting exit status:",
+              chrome.runtime.lastError
+            );
+          }
+          chrome.runtime.reload();
+        });
+      })
+      .catch((error) => {
+        console.error("Error clearing data:", error);
+      });
+  }
+
   function init() {
     updateInterval = setInterval(updateTimeDisplay, 1000);
     updateTimeDisplay();
@@ -110,31 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
           "Are you sure you want to exit ScreenTime? This will clear all data."
         )
       ) {
-        clearAllData()
-          .then(() => {
-            chrome.tabs.query({}, (tabs) => {
-              tabs.forEach((tab) => {
-                if (
-                  tab.url.startsWith("http://") ||
-                  tab.url.startsWith("https://")
-                ) {
-                  chrome.tabs.sendMessage(tab.id, { action: "exitScreenTime" });
-                }
-              });
-            });
-            chrome.storage.local.set({ screenTimeExited: true }, () => {
-              if (chrome.runtime.lastError) {
-                console.error(
-                  "Error setting exit status:",
-                  chrome.runtime.lastError
-                );
-              }
-              window.close();
-            });
-          })
-          .catch((error) => {
-            console.error("Error clearing data:", error);
-          });
+        exitScreenTime();
       }
     });
   }

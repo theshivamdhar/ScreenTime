@@ -202,6 +202,12 @@
     container = null;
   }
 
+  function resetTimer() {
+    secondsSpent = 0;
+    updateLabel();
+    saveTimeSpent();
+  }
+
   init();
 
   window.addEventListener("beforeunload", cleanup);
@@ -217,14 +223,7 @@
       });
     }
     if (request.action === "resetTimer") {
-      secondsSpent = 0;
-      chrome.storage.local.set({ [storageKey]: 0 }, () => {
-        if (chrome.runtime.lastError) {
-          console.error("Error resetting timer:", chrome.runtime.lastError);
-        } else {
-          updateLabel();
-        }
-      });
+      resetTimer();
     }
   });
 })();
