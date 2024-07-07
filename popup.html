@@ -1,17 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ScreenTime Dashboard</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="dark-purple-theme">
-    <h3>ScreenTime Dashboard</h3>
-    <div id="time-list">
-      <h4>Websites Visited Today</h4>
+    <div id="container">
+      <h1>ScreenTime Dashboard</h1>
       <div id="website-times"></div>
+      <button id="reset-button">Reset All Timers</button>
+      <button id="exit-button">Exit ScreenTime</button>
     </div>
-    <button id="reset-button">Reset All Timers</button>
-    <button id="exit-button">Exit ScreenTime</button>
     <script src="popup.js"></script>
   </body>
 </html>

@@ -85,13 +85,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Function to clear all data
-  function clearAllData() {
-    return new Promise((resolve) => {
-      chrome.storage.local.clear(resolve);
-    });
-  }
-
   // Cleanup function
   function cleanup() {
     clearInterval(updateInterval);

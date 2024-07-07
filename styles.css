@@ -1,101 +1,27 @@
 body.dark-purple-theme {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
   font-family: Arial, sans-serif;
-  width: 300px;
-  height: 400px;
-  margin: 0;
-  padding: 15px;
-  box-sizing: border-box;
-  background-color: #1a0b26; /* Dark purple background */
-  color: #e0e0e0; /* Light gray text */
 }
 
-h3 {
-  margin: 0 0 15px 0;
-  font-size: 20px;
-  color: #b19cd9; /* Light purple shade for headings */
+#container {
+  padding: 20px;
 }
 
-h4 {
-  margin: 10px 0;
-  color: #9370db; /* Medium purple shade for subheadings */
+button {
+  background-color: #8a2be2;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
-#time-list {
-  margin-top: 10px;
-}
-
-#website-times {
-  overflow-y: auto;
-  max-height: 300px;
-  padding-right: 10px;
+button:hover {
+  background-color: #7326c7;
 }
 
 .site-time {
-  margin-bottom: 15px;
-  padding: 10px;
-  background-color: #301934; /* Darker purple for list items */
-  border-radius: 5px;
-  border: 1px solid #4b0082; /* Indigo border */
-}
-
-.site-time strong {
-  color: #d8bfd8; /* Light purple for website names */
-}
-
-.time-display {
-  font-weight: bold;
-  color: #dda0dd; /* Plum color for time display */
-}
-
-#reset-button {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  margin-top: 15px;
-  background-color: #8b008b; /* Dark magenta */
-  color: #e0e0e0;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-#reset-button:hover {
-  background-color: #9932cc; /* Dark orchid */
-}
-
-#exit-button {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  background-color: #4b0082; /* Indigo */
-  color: #e0e0e0;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-#exit-button:hover {
-  background-color: #6a5acd; /* Slate blue */
-}
-
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #1a0b26;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #4b0082;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #6a5acd;
+  margin: 10px 0;
 }
