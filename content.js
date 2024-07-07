@@ -9,14 +9,25 @@
   let isExited = false;
 
   function init() {
-    if (!currentUrl || isExited) return; // Exit if URL is invalid or extension has been exited
+    if (!currentUrl) return;
 
-    createTimer();
-    startTimer();
+    chrome.storage.local.get("screenTimeExited", (result) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error checking exit status:", chrome.runtime.lastError);
+        return;
+      }
+
+      if (result.screenTimeExited) {
+        isExited = true;
+        return;
+      }
+      createTimer();
+      startTimer();
+    });
   }
 
   function createTimer() {
-    if (container) return; // Avoid creating the timer multiple times
+    if (container) return;
 
     container = document.createElement("div");
     Object.assign(container.style, {
@@ -71,31 +82,33 @@
   }
 
   function addEventListeners() {
-    container.addEventListener("mouseenter", () => {
-      timerIcon.style.transform = "scale(1.1)";
-      timerIcon.style.boxShadow = "0 0 20px rgba(138, 43, 226, 0.8)";
-      detailsPopup.style.display = "block";
-      requestAnimationFrame(() => {
-        detailsPopup.style.transform = "translateY(0)";
-        detailsPopup.style.opacity = "1";
-      });
-    });
-
-    container.addEventListener("mouseleave", () => {
-      timerIcon.style.transform = "scale(1)";
-      timerIcon.style.boxShadow = "0 0 15px rgba(138, 43, 226, 0.5)";
-      detailsPopup.style.transform = "translateY(10px)";
-      detailsPopup.style.opacity = "0";
-      setTimeout(() => {
-        if (!detailsPopup.contains(document.activeElement)) {
-          detailsPopup.style.display = "none";
-        }
-      }, 200);
-    });
-
+    container.addEventListener("mouseenter", showDetails);
+    container.addEventListener("mouseleave", hideDetails);
     container.addEventListener("mousedown", startDragging);
     document.addEventListener("mousemove", drag);
     document.addEventListener("mouseup", stopDragging);
+  }
+
+  function showDetails() {
+    timerIcon.style.transform = "scale(1.1)";
+    timerIcon.style.boxShadow = "0 0 20px rgba(138, 43, 226, 0.8)";
+    detailsPopup.style.display = "block";
+    requestAnimationFrame(() => {
+      detailsPopup.style.transform = "translateY(0)";
+      detailsPopup.style.opacity = "1";
+    });
+  }
+
+  function hideDetails() {
+    timerIcon.style.transform = "scale(1)";
+    timerIcon.style.boxShadow = "0 0 15px rgba(138, 43, 226, 0.5)";
+    detailsPopup.style.transform = "translateY(10px)";
+    detailsPopup.style.opacity = "0";
+    setTimeout(() => {
+      if (!detailsPopup.contains(document.activeElement)) {
+        detailsPopup.style.display = "none";
+      }
+    }, 200);
   }
 
   function startDragging(e) {
@@ -140,32 +153,11 @@
   }
 
   function startTimer() {
-    function updateLabel() {
-      const hours = Math.floor(secondsSpent / 3600);
-      const minutes = Math.floor((secondsSpent % 3600) / 60);
-      const seconds = secondsSpent % 60;
-      const timeString = `${hours.toString().padStart(2, "0")}:${minutes
-        .toString()
-        .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-      detailsPopup.innerHTML = `
-        <strong>Time spent on ${currentUrl}:</strong><br>
-        <span style="font-size: 20px; color: #a64dff;">${timeString}</span>
-      `;
-    }
-
-    function saveTimeSpent() {
-      chrome.storage.local.set({ [storageKey]: secondsSpent }, () => {
-        if (chrome.runtime.lastError) {
-          console.error(
-            "Error saving data to chrome.storage:",
-            chrome.runtime.lastError
-          );
-        }
-      });
-    }
-
-    // Load initial time from chrome.storage
     chrome.storage.local.get(storageKey, (result) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error retrieving time data:", chrome.runtime.lastError);
+        return;
+      }
       if (result[storageKey]) {
         secondsSpent = parseInt(result[storageKey], 10);
       }
@@ -179,6 +171,27 @@
     }, 1000);
   }
 
+  function updateLabel() {
+    const hours = Math.floor(secondsSpent / 3600);
+    const minutes = Math.floor((secondsSpent % 3600) / 60);
+    const seconds = secondsSpent % 60;
+    const timeString = `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    detailsPopup.innerHTML = `
+      <strong>Time spent on ${currentUrl}:</strong><br>
+      <span style="font-size: 20px; color: #a64dff;">${timeString}</span>
+    `;
+  }
+
+  function saveTimeSpent() {
+    chrome.storage.local.set({ [storageKey]: secondsSpent }, () => {
+      if (chrome.runtime.lastError) {
+        console.error("Error saving time data:", chrome.runtime.lastError);
+      }
+    });
+  }
+
   function cleanup() {
     if (intervalId) {
       clearInterval(intervalId);
@@ -189,24 +202,26 @@
     container = null;
   }
 
-  // Initialize the extension
   init();
 
-  // Handle extension context invalidation
   window.addEventListener("beforeunload", cleanup);
 
-  // Message handling
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "exitScreenTime") {
       cleanup();
       isExited = true;
+      chrome.storage.local.set({ screenTimeExited: true }, () => {
+        if (chrome.runtime.lastError) {
+          console.error("Error setting exit status:", chrome.runtime.lastError);
+        }
+      });
     }
     if (request.action === "resetTimer") {
+      secondsSpent = 0;
       chrome.storage.local.set({ [storageKey]: 0 }, () => {
         if (chrome.runtime.lastError) {
           console.error("Error resetting timer:", chrome.runtime.lastError);
         } else {
-          secondsSpent = 0;
           updateLabel();
         }
       });

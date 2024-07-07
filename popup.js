@@ -59,6 +59,8 @@ document.addEventListener("DOMContentLoaded", () => {
     chrome.storage.local.get(null, (items) => {
       if (chrome.runtime.lastError) {
         console.error("Error retrieving data:", chrome.runtime.lastError);
+        resetButton.removeChild(loadingSpinner);
+        resetButton.disabled = false;
         return;
       }
 
@@ -120,8 +122,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
               });
             });
-            chrome.storage.local.clear(() => {
-              chrome.runtime.reload();
+            chrome.storage.local.set({ screenTimeExited: true }, () => {
+              if (chrome.runtime.lastError) {
+                console.error(
+                  "Error setting exit status:",
+                  chrome.runtime.lastError
+                );
+              }
+              window.close();
             });
           })
           .catch((error) => {
