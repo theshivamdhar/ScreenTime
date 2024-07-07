@@ -40,22 +40,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function clearAllData() {
     return new Promise((resolve, reject) => {
-      chrome.storage.local.get(null, (items) => {
+      chrome.storage.local.clear(() => {
         if (chrome.runtime.lastError) {
           reject(chrome.runtime.lastError);
-          return;
+        } else {
+          resolve();
         }
-
-        const keysToRemove = Object.keys(items).filter((key) =>
-          key.startsWith("screenTime_")
-        );
-        chrome.storage.local.remove(keysToRemove, () => {
-          if (chrome.runtime.lastError) {
-            reject(chrome.runtime.lastError);
-          } else {
-            resolve();
-          }
-        });
       });
     });
   }
@@ -121,7 +111,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
               });
             });
-            window.close();
+            chrome.storage.local.clear(() => {
+              chrome.runtime.reload();
+            });
           })
           .catch((error) => {
             console.error("Error clearing data:", error);

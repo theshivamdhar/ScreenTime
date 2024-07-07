@@ -204,6 +204,10 @@
       chrome.storage.local.set({ [storageKey]: 0 }, () => {
         if (chrome.runtime.lastError) {
           console.error("Error resetting timer:", chrome.runtime.lastError);
+        } else {
+          // Reset the timer immediately in the content script
+          secondsSpent = 0;
+          updateLabel();
         }
       });
     }
