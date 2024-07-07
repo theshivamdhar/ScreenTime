@@ -38,18 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   }
 
-  function clearAllData() {
-    return new Promise((resolve, reject) => {
-      chrome.storage.local.clear(() => {
-        if (chrome.runtime.lastError) {
-          reject(chrome.runtime.lastError);
-        } else {
-          resolve();
-        }
-      });
-    });
-  }
-
   function resetAllTimers() {
     const loadingSpinner = document.createElement("span");
     loadingSpinner.className = "loading";
@@ -70,33 +58,29 @@ document.addEventListener("DOMContentLoaded", () => {
           resetItems[key] = 0;
         }
       }
+
       chrome.storage.local.set(resetItems, () => {
         if (chrome.runtime.lastError) {
           console.error("Error resetting timers:", chrome.runtime.lastError);
         } else {
           updateTimeDisplay();
-          chrome.tabs.query({}, (tabs) => {
-            tabs.forEach((tab) => {
-              if (
-                tab.url.startsWith("http://") ||
-                tab.url.startsWith("https://")
-              ) {
-                chrome.tabs.sendMessage(tab.id, { action: "resetTimer" });
-              }
-            });
+          chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            if (tabs[0]) {
+              chrome.tabs.sendMessage(tabs[0].id, { action: "resetTimer" });
+            }
           });
         }
-        setTimeout(() => {
-          resetButton.removeChild(loadingSpinner);
-          resetButton.disabled = false;
-        }, 1000);
+        resetButton.removeChild(loadingSpinner);
+        resetButton.disabled = false;
       });
     });
   }
 
   function exitScreenTime() {
-    clearAllData()
-      .then(() => {
+    chrome.runtime.sendMessage({ action: "exitScreenTime" }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error exiting ScreenTime:", chrome.runtime.lastError);
+      } else if (response && response.success) {
         chrome.tabs.query({}, (tabs) => {
           tabs.forEach((tab) => {
             if (
@@ -107,19 +91,14 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           });
         });
-        chrome.storage.local.set({ screenTimeExited: true }, () => {
-          if (chrome.runtime.lastError) {
-            console.error(
-              "Error setting exit status:",
-              chrome.runtime.lastError
-            );
-          }
-          chrome.runtime.reload();
-        });
-      })
-      .catch((error) => {
-        console.error("Error clearing data:", error);
-      });
+        window.close();
+      } else {
+        console.error(
+          "Failed to exit ScreenTime:",
+          response ? response.error : "Unknown error"
+        );
+      }
+    });
   }
 
   function init() {

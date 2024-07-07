@@ -12,7 +12,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           error: chrome.runtime.lastError.message,
         });
       } else {
-        sendResponse({ success: true });
+        chrome.storage.local.set({ screenTimeExited: true }, () => {
+          if (chrome.runtime.lastError) {
+            console.error(
+              "Error setting exit status:",
+              chrome.runtime.lastError
+            );
+            sendResponse({
+              success: false,
+              error: chrome.runtime.lastError.message,
+            });
+          } else {
+            sendResponse({ success: true });
+          }
+        });
       }
     });
     return true; // Indicates that the response will be sent asynchronously
