@@ -57,12 +57,6 @@
       }
     });
 
-    // Click functionality to open ScreenTime Dashboard
-    timerIcon.addEventListener("click", (e) => {
-      e.stopPropagation();
-      chrome.runtime.sendMessage({ action: "openDashboard" });
-    });
-
     // Dragging functionality
     container.addEventListener("mousedown", startDragging);
     document.addEventListener("mousemove", drag);

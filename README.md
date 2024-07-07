@@ -14,14 +14,17 @@ ScreenTime is a Chrome extension designed to help users track and manage their t
 ## Installation
 
 1. **Download the Extension**:
+
    - Visit the [ScreenTime GitHub releases page](https://github.com/theshivamdhar/ScreenTime.git).
    - Download the latest release ZIP file.
 
 2. **Extract the ZIP File**:
+
    - Locate the downloaded ZIP file on your computer.
    - Extract its contents to a folder of your choice.
 
 3. **Load the Extension in Chrome**:
+
    - Open Google Chrome and navigate to `chrome://extensions/`.
    - Enable "Developer mode" by toggling the switch in the top right corner.
    - Click on "Load unpacked" button that appears after enabling Developer mode.
@@ -30,10 +33,6 @@ ScreenTime is a Chrome extension designed to help users track and manage their t
 4. **Verify Installation**:
    - ScreenTime should now appear in your list of installed extensions.
    - You should see the ScreenTime icon in your Chrome toolbar.
-
-## Important Note
-
-> **⚠️ Note:** After installing the extension, you may encounter an error message in the console. This is a known issue and does not affect the functionality of ScreenTime. The plugin is working properly despite this error. We are actively working on resolving this in future updates.
 
 ## Usage
 
@@ -67,6 +66,7 @@ Encountering issues or have suggestions? We're here to help!
 - Check out our [FAQ](FAQ.md) for common questions
 - Report bugs or request features through our [Issue Tracker](ISSUE_TRACKER.md)
 - For additional support, contact us at workwithshivamd@gmail.com
+
 ---
 
 Made with ❤️ by [Shivam Dhar](https://github.com/theshivamdhar)

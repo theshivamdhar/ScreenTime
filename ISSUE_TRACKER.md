@@ -34,6 +34,7 @@ Example of a good bug report:
 Title: Timer doesn't pause when switching to a different Chrome window
 
 Steps to reproduce:
+
 1. Open ScreenTime and start timer on example.com
 2. Open a new Chrome window and switch to it
 3. Return to the original window after 5 minutes

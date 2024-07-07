@@ -50,9 +50,9 @@ All JavaScript must adhere to [JavaScript Standard Style](https://standardjs.com
 
 - Use [Markdown](https://daringfireball.net/projects/markdown/).
 - Reference methods and classes in markdown with the custom `{}` notation:
-    - Reference classes with `{ClassName}`
-    - Reference instance methods with `{ClassName::methodName}`
-    - Reference class methods with `{ClassName.methodName}`
+  - Reference classes with `{ClassName}`
+  - Reference instance methods with `{ClassName::methodName}`
+  - Reference class methods with `{ClassName.methodName}`
 
 ## Additional Notes
 
@@ -60,9 +60,9 @@ All JavaScript must adhere to [JavaScript Standard Style](https://standardjs.com
 
 This section lists the labels we use to help us track and manage issues and pull requests.
 
-* `bug` - Issues that are bugs.
-* `enhancement` - Issues that are feature requests.
-* `documentation` - Issues or pull requests related to documentation.
-* `good first issue` - Good for newcomers.
+- `bug` - Issues that are bugs.
+- `enhancement` - Issues that are feature requests.
+- `documentation` - Issues or pull requests related to documentation.
+- `good first issue` - Good for newcomers.
 
 Thank you for contributing to ScreenTime!
