@@ -149,46 +149,19 @@
         .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
       detailsPopup.innerHTML = `
         <strong>Time spent on ${currentUrl}:</strong><br>
-        <span style="font-size: 20px; color: #8a2be2;">${timeString}</span><br><br>
-        <strong>Websites visited today:</strong><br>
-        <div id="websitesVisited"></div>
+        <span style="font-size: 20px; color: #a64dff;">${timeString}</span>
       `;
-      updateWebsitesVisited();
-    }
-
-    function updateWebsitesVisited() {
-      const websitesVisitedElem =
-        detailsPopup.querySelector("#websitesVisited");
-      if (websitesVisitedElem) {
-        chrome.storage.local.get(null, (items) => {
-          let websitesHTML = "";
-          for (const [key, time] of Object.entries(items)) {
-            if (key.startsWith("screenTime_")) {
-              const site = key.replace("screenTime_", "");
-              const formattedTime = formatTime(time);
-              websitesHTML += `<div>${site}: ${formattedTime}</div>`;
-            }
-          }
-          websitesVisitedElem.innerHTML = websitesHTML;
-        });
-      }
-    }
-
-    function formatTime(seconds) {
-      const hours = Math.floor(seconds / 3600);
-      const minutes = Math.floor((seconds % 3600) / 60);
-      const secs = seconds % 60;
-      return `${hours.toString().padStart(2, "0")}:${minutes
-        .toString()
-        .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
     }
 
     function saveTimeSpent() {
-      try {
-        chrome.storage.local.set({ [storageKey]: secondsSpent });
-      } catch (e) {
-        console.error("Error saving data to chrome.storage:", e);
-      }
+      chrome.storage.local.set({ [storageKey]: secondsSpent }, () => {
+        if (chrome.runtime.lastError) {
+          console.error(
+            "Error saving data to chrome.storage:",
+            chrome.runtime.lastError
+          );
+        }
+      });
     }
 
     // Load initial time from chrome.storage
@@ -222,13 +195,17 @@
   // Handle extension context invalidation
   window.addEventListener("beforeunload", cleanup);
 
-  // Message handling (if needed)
+  // Message handling
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "exitScreenTime") {
       cleanup();
     }
     if (request.action === "resetTimer") {
-      chrome.storage.local.set({ [storageKey]: 0 });
+      chrome.storage.local.set({ [storageKey]: 0 }, () => {
+        if (chrome.runtime.lastError) {
+          console.error("Error resetting timer:", chrome.runtime.lastError);
+        }
+      });
     }
   });
 })();

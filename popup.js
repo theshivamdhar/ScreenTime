@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      websiteTimesElem.innerHTML = "<h2>Websites visited today:</h2>";
+      websiteTimesElem.innerHTML = "";
       for (const [key, time] of Object.entries(items)) {
         if (key.startsWith("screenTime_")) {
           const site = key.replace("screenTime_", "");
@@ -134,4 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
     clearInterval(updateInterval);
   }
 
-  init
+  init();
+  window.addEventListener("unload", cleanup);
+});
