@@ -32,8 +32,6 @@
     container = document.createElement("div");
     Object.assign(container.style, {
       position: "fixed",
-      top: "10px",
-      right: "10px",
       zIndex: "10000",
       cursor: "move",
     });
@@ -58,8 +56,6 @@
     detailsPopup = document.createElement("div");
     Object.assign(detailsPopup.style, {
       position: "absolute",
-      top: "120%",
-      right: "0",
       padding: "15px",
       backgroundColor: "rgba(48, 25, 52, 0.85)",
       color: "#e0e0e0",
@@ -71,7 +67,6 @@
       backdropFilter: "blur(5px)",
       display: "none",
       transition: "all 0.2s ease",
-      transform: "translateY(10px)",
       opacity: "0",
       width: "max-content",
       maxWidth: "300px",
@@ -79,8 +74,23 @@
     });
     container.appendChild(detailsPopup);
 
+    positionTimerWithinViewport();
     addEventListeners();
     pulseAnimation();
+  }
+
+  function positionTimerWithinViewport() {
+    const padding = 10; // Padding from the edge of the viewport
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const containerWidth = 50; // Width of the timer icon
+    const containerHeight = 50; // Height of the timer icon
+
+    let left = viewportWidth - containerWidth - padding;
+    let top = padding;
+
+    container.style.left = `${left}px`;
+    container.style.top = `${top}px`;
   }
 
   function addEventListeners() {
@@ -89,6 +99,7 @@
     container.addEventListener("mousedown", startDragging);
     document.addEventListener("mousemove", drag);
     document.addEventListener("mouseup", stopDragging);
+    window.addEventListener("resize", positionTimerWithinViewport);
   }
 
   function showDetails() {
@@ -121,18 +132,18 @@
     const viewportHeight = window.innerHeight;
 
     if (containerRect.right + popupRect.width > viewportWidth) {
-      detailsPopup.style.right = "auto";
-      detailsPopup.style.left = "0";
-    } else {
-      detailsPopup.style.right = "0";
+      detailsPopup.style.right = "100%";
       detailsPopup.style.left = "auto";
+    } else {
+      detailsPopup.style.left = "100%";
+      detailsPopup.style.right = "auto";
     }
 
     if (containerRect.bottom + popupRect.height > viewportHeight) {
+      detailsPopup.style.bottom = "0";
       detailsPopup.style.top = "auto";
-      detailsPopup.style.bottom = "120%";
     } else {
-      detailsPopup.style.top = "120%";
+      detailsPopup.style.top = "0";
       detailsPopup.style.bottom = "auto";
     }
   }
@@ -145,14 +156,27 @@
 
   function drag(e) {
     if (isDragging) {
-      const newLeft = e.clientX - dragOffsetX;
-      const newTop = e.clientY - dragOffsetY;
-      const maxX = window.innerWidth - container.offsetWidth;
-      const maxY = window.innerHeight - container.offsetHeight;
+      const padding = 10; // Padding from the edge of the viewport
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const containerWidth = container.offsetWidth;
+      const containerHeight = container.offsetHeight;
 
-      container.style.left = `${Math.max(0, Math.min(newLeft, maxX))}px`;
-      container.style.top = `${Math.max(0, Math.min(newTop, maxY))}px`;
-      container.style.right = "auto";
+      let newLeft = e.clientX - dragOffsetX;
+      let newTop = e.clientY - dragOffsetY;
+
+      // Ensure the container stays within the viewport bounds
+      newLeft = Math.max(
+        padding,
+        Math.min(newLeft, viewportWidth - containerWidth - padding)
+      );
+      newTop = Math.max(
+        padding,
+        Math.min(newTop, viewportHeight - containerHeight - padding)
+      );
+
+      container.style.left = `${newLeft}px`;
+      container.style.top = `${newTop}px`;
     }
   }
 
