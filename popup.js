@@ -64,10 +64,15 @@ document.addEventListener("DOMContentLoaded", () => {
           console.error("Error resetting timers:", chrome.runtime.lastError);
         } else {
           updateTimeDisplay();
-          chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            if (tabs[0]) {
-              chrome.tabs.sendMessage(tabs[0].id, { action: "resetTimer" });
-            }
+          chrome.tabs.query({}, (tabs) => {
+            tabs.forEach((tab) => {
+              if (
+                tab.url.startsWith("http://") ||
+                tab.url.startsWith("https://")
+              ) {
+                chrome.tabs.sendMessage(tab.id, { action: "resetTimer" });
+              }
+            });
           });
         }
         resetButton.removeChild(loadingSpinner);
