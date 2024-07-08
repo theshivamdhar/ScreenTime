@@ -74,6 +74,8 @@ document.addEventListener("DOMContentLoaded", () => {
               }
             });
           });
+          // Send a message to the background script to reset all timers
+          chrome.runtime.sendMessage({ action: "resetAllTimers" });
         }
         resetButton.removeChild(loadingSpinner);
         resetButton.disabled = false;

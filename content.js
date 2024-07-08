@@ -296,4 +296,13 @@
       resetTimer();
     }
   });
+
+  chrome.storage.onChanged.addListener((changes, namespace) => {
+    if (namespace === "local" && changes[storageKey]) {
+      const newValue = changes[storageKey].newValue;
+      if (newValue === 0) {
+        resetTimer();
+      }
+    }
+  });
 })();
