@@ -26,7 +26,191 @@
     });
   }
 
-  // ... (rest of the existing functions remain the same)
+  function createTimer() {
+    if (container) return;
+
+    container = document.createElement("div");
+    Object.assign(container.style, {
+      position: "fixed",
+      zIndex: "10000",
+      cursor: "move",
+    });
+    document.body.appendChild(container);
+
+    timerIcon = document.createElement("div");
+    timerIcon.innerHTML = "⏱️";
+    Object.assign(timerIcon.style, {
+      fontSize: "32px",
+      width: "50px",
+      height: "50px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "rgba(138, 43, 226, 0.7)",
+      borderRadius: "50%",
+      boxShadow: "0 0 15px rgba(138, 43, 226, 0.5)",
+      transition: "all 0.2s ease",
+    });
+    container.appendChild(timerIcon);
+
+    detailsPopup = document.createElement("div");
+    Object.assign(detailsPopup.style, {
+      position: "absolute",
+      padding: "15px",
+      backgroundColor: "rgba(48, 25, 52, 0.85)",
+      color: "#e0e0e0",
+      fontFamily: "Arial, sans-serif",
+      fontSize: "16px",
+      borderRadius: "10px",
+      boxShadow: "0 0 20px rgba(138, 43, 226, 0.5)",
+      border: "1px solid rgba(138, 43, 226, 0.5)",
+      backdropFilter: "blur(5px)",
+      display: "none",
+      transition: "all 0.2s ease",
+      opacity: "0",
+      width: "max-content",
+      maxWidth: "300px",
+      wordWrap: "break-word",
+    });
+    container.appendChild(detailsPopup);
+
+    positionTimerWithinViewport();
+    addEventListeners();
+    pulseAnimation();
+  }
+
+  function positionTimerWithinViewport() {
+    const padding = 20;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const containerWidth = 50;
+    const containerHeight = 50;
+
+    const maxLeft = viewportWidth - containerWidth - padding;
+    const maxTop = viewportHeight - containerHeight - padding;
+
+    let left = maxLeft;
+    let top = padding;
+
+    left = Math.max(padding, Math.min(left, maxLeft));
+    top = Math.max(padding, Math.min(top, maxTop));
+
+    container.style.left = `${left}px`;
+    container.style.top = `${top}px`;
+  }
+
+  function addEventListeners() {
+    container.addEventListener("mouseenter", showDetails);
+    container.addEventListener("mouseleave", hideDetails);
+    container.addEventListener("mousedown", startDragging);
+    document.addEventListener("mousemove", drag);
+    document.addEventListener("mouseup", stopDragging);
+    window.addEventListener("resize", positionTimerWithinViewport);
+  }
+
+  function showDetails() {
+    timerIcon.style.transform = "scale(1.1)";
+    timerIcon.style.boxShadow = "0 0 20px rgba(138, 43, 226, 0.8)";
+    detailsPopup.style.display = "block";
+    requestAnimationFrame(() => {
+      detailsPopup.style.transform = "translateY(0)";
+      detailsPopup.style.opacity = "1";
+    });
+    adjustPopupPosition();
+  }
+
+  function hideDetails() {
+    timerIcon.style.transform = "scale(1)";
+    timerIcon.style.boxShadow = "0 0 15px rgba(138, 43, 226, 0.5)";
+    detailsPopup.style.transform = "translateY(10px)";
+    detailsPopup.style.opacity = "0";
+    setTimeout(() => {
+      if (!detailsPopup.contains(document.activeElement)) {
+        detailsPopup.style.display = "none";
+      }
+    }, 200);
+  }
+
+  function adjustPopupPosition() {
+    const containerRect = container.getBoundingClientRect();
+    const popupRect = detailsPopup.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    if (containerRect.right + popupRect.width > viewportWidth) {
+      detailsPopup.style.right = "100%";
+      detailsPopup.style.left = "auto";
+    } else {
+      detailsPopup.style.left = "100%";
+      detailsPopup.style.right = "auto";
+    }
+
+    if (containerRect.bottom + popupRect.height > viewportHeight) {
+      detailsPopup.style.bottom = "0";
+      detailsPopup.style.top = "auto";
+    } else {
+      detailsPopup.style.top = "0";
+      detailsPopup.style.bottom = "auto";
+    }
+  }
+
+  function startDragging(e) {
+    isDragging = true;
+    dragOffsetX = e.clientX - container.offsetLeft;
+    dragOffsetY = e.clientY - container.offsetTop;
+  }
+
+  function drag(e) {
+    if (isDragging) {
+      const padding = 10;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const containerWidth = container.offsetWidth;
+      const containerHeight = container.offsetHeight;
+
+      let newLeft = e.clientX - dragOffsetX;
+      let newTop = e.clientY - dragOffsetY;
+
+      newLeft = Math.max(
+        padding,
+        Math.min(newLeft, viewportWidth - containerWidth - padding)
+      );
+      newTop = Math.max(
+        padding,
+        Math.min(newTop, viewportHeight - containerHeight - padding)
+      );
+
+      container.style.left = `${newLeft}px`;
+      container.style.top = `${newTop}px`;
+    }
+  }
+
+  function stopDragging() {
+    isDragging = false;
+  }
+
+  function pulseAnimation() {
+    timerIcon.animate(
+      [
+        {
+          transform: "scale(1)",
+          boxShadow: "0 0 15px rgba(138, 43, 226, 0.5)",
+        },
+        {
+          transform: "scale(1.05)",
+          boxShadow: "0 0 20px rgba(138, 43, 226, 0.8)",
+        },
+        {
+          transform: "scale(1)",
+          boxShadow: "0 0 15px rgba(138, 43, 226, 0.5)",
+        },
+      ],
+      {
+        duration: 2000,
+        iterations: Infinity,
+      }
+    );
+  }
 
   function startTimer() {
     chrome.storage.local.get(storageKey, (result) => {
