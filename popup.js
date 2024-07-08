@@ -96,9 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   tab.url.startsWith("http://") ||
                   tab.url.startsWith("https://")
                 ) {
-                  chrome.tabs.sendMessage(tab.id, {
-                    action: "exitScreenTime",
-                  });
+                  chrome.tabs.sendMessage(tab.id, { action: "exitScreenTime" });
                 }
               });
             });
