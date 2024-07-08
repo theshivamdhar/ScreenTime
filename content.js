@@ -297,9 +297,7 @@
     }
     if (request.action === "resetTimer") {
       resetTimer();
-      if (intervalId) {
-      clearInterval(intervalId);
     }
     startTimer();
-  }
-});
+  });
+})();
